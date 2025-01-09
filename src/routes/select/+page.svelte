@@ -1,6 +1,7 @@
 <script lang="ts">
   import { Button } from "$lib/components/ui/button";
   import { ChevronLeft, ChevronRight, LayoutGrid, Layers } from "lucide-svelte";
+  import { onMount } from 'svelte';
 
   const MAX_IMAGES = 7; // Update this when adding more images
   let currentIndex = 0;
@@ -13,6 +14,23 @@
   function previousImage() {
     currentIndex = (currentIndex - 1 + MAX_IMAGES) % MAX_IMAGES;
   }
+
+  function handleKeydown(event: KeyboardEvent) {
+    if (!isStackView) return;
+
+    if (event.key === 'ArrowLeft') {
+      previousImage();
+    } else if (event.key === 'ArrowRight') {
+      nextImage();
+    }
+  }
+
+  onMount(() => {
+    window.addEventListener('keydown', handleKeydown);
+    return () => {
+      window.removeEventListener('keydown', handleKeydown);
+    };
+  });
 
   function toggleView() {
     isStackView = !isStackView;

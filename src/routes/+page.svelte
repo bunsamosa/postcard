@@ -1,7 +1,8 @@
 <script lang="ts">
   import { Button } from "$lib/components/ui/button";
-  import { X, ArrowLeft } from "lucide-svelte";
+  import { X, ArrowLeft, ArrowRight } from "lucide-svelte";
   import { goto } from "$app/navigation";
+  import { onMount } from 'svelte';
 
   const MAX_IMAGES = 7; // Update this when adding more images
 
@@ -19,6 +20,21 @@
   function navigateToSelect() {
     goto('/select');
   }
+
+  function handleKeydown(event: KeyboardEvent) {
+    if (event.key === 'Enter') {
+      navigateToSelect();
+    } else if (event.key === 'Escape') {
+      navigateToSelect();
+    }
+  }
+
+  onMount(() => {
+    window.addEventListener('keydown', handleKeydown);
+    return () => {
+      window.removeEventListener('keydown', handleKeydown);
+    };
+  });
 </script>
 
 <svelte:head>
@@ -86,7 +102,7 @@
           class="w-full px-[20px] py-[14px] bg-black hover:bg-black/90 rounded-xl flex justify-center items-center gap-2"
         >
           <span class="text-white text-[17px] leading-[22px]">Enter</span>
-          <ArrowLeft class="w-[18px] h-[12px] text-white" />
+          <ArrowRight class="w-[18px] h-[12px] text-white" />
         </button>
       </div>
     </div>
