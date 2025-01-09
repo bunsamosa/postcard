@@ -44,16 +44,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Jomhuria&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 </svelte:head>
 
-<div class="w-full min-h-screen bg-white p-4">
+<div class="w-full min-h-screen bg-white p-2 sm:p-4">
   <!-- Header -->
-  <header class="max-w-[1201px] mx-auto h-16 px-4 relative">
+  <header class="max-w-[1201px] mx-auto h-[84px] sm:h-16 px-2 sm:px-4 relative">
     <!-- Title -->
-    <div class="absolute left-4 top-[6px]">
-      <h1 class="text-[56px] font-jomhuria leading-[56px] text-black">Send a postcard</h1>
+    <div class="absolute left-2 sm:left-4 top-[6px]">
+      <h1 class="text-[40px] sm:text-[56px] font-jomhuria leading-[40px] sm:leading-[56px] text-black">Send a postcard</h1>
     </div>
 
     <!-- View toggles -->
-    <div class="absolute left-1/2 -translate-x-1/2 top-[14px] flex items-center gap-2">
+    <div class="absolute left-1/2 -translate-x-1/2 top-[48px] sm:top-[14px] flex items-center gap-2">
       <button
         class="p-[9px] {isStackView ? 'bg-[#EDF2F8]' : ''} rounded-[75px] hover:bg-[#E2E9F2]"
         on:click={() => isStackView = true}
@@ -78,26 +78,26 @@
     </div>
 
     <!-- Navigation -->
-    <div class="absolute right-4 top-4 flex items-center gap-2">
-      <button class="px-[10px] py-1 rounded-[40px] hover:bg-[#F2F2F7]">
+    <div class="absolute right-2 sm:right-4 top-[48px] sm:top-4 flex items-center gap-2">
+      <button class="px-[10px] py-1 rounded-[40px] hover:bg-[#F2F2F7] hidden sm:block">
         <span class="text-[#3D3D3D] text-base leading-5 font-inter">Print Order</span>
       </button>
-      <button class="px-[10px] py-1 rounded-[40px] hover:bg-[#F2F2F7]">
+      <button class="px-[10px] py-1 rounded-[40px] hover:bg-[#F2F2F7] hidden sm:block">
         <span class="text-[#3D3D3D] text-base leading-5 font-inter">About</span>
       </button>
     </div>
   </header>
 
   <!-- Main Content -->
-  <main class="flex flex-col items-center justify-center mt-[85px]">
+  <main class="flex flex-col items-center justify-center mt-[40px] sm:mt-[85px]">
     {#if isStackView}
       <!-- Stacked Cards View -->
-      <div class="relative w-[499.30px] h-[645.83px]">
+      <div class="relative w-[90vw] sm:w-[499.30px] h-[500px] sm:h-[645.83px]">
         <!-- Background Cards -->
         {#each allImages.slice(currentIndex + 1, currentIndex + 4) as imageNum, idx}
           <div
-            class="absolute w-[450px] h-[600px] bg-white shadow-[18.15px_46.29px_38.12px_rgba(12,12,13,0.10)]"
-            style="left: {28.85 + (idx * 12)}px; top: {12.24 + (idx * 12)}px; transform: rotate(1.55deg); transform-origin: top-left;"
+            class="absolute w-[85vw] sm:w-[450px] h-[460px] sm:h-[600px] bg-white shadow-[18.15px_46.29px_38.12px_rgba(12,12,13,0.10)]"
+            style="left: {20 + (idx * 8)}px; top: {8 + (idx * 8)}px; transform: rotate(1.55deg); transform-origin: top-left;"
           >
             <img
               src="/images/img{imageNum}.jpg"
@@ -108,18 +108,18 @@
         {/each}
 
         <!-- Main Card -->
-        <div class="absolute left-0 top-0 bg-white shadow-[0px_30.29px_83.51px_rgba(12,12,13,0.10)] pt-6 pb-[66.51px] px-[22px]">
+        <div class="absolute left-0 top-0 bg-white shadow-[0px_30.29px_83.51px_rgba(12,12,13,0.10)] pt-4 sm:pt-6 pb-[40px] sm:pb-[66.51px] px-[16px] sm:px-[22px]">
           <div class="flex justify-center items-center">
             <img
               src="/images/img{allImages[currentIndex]}.jpg"
               alt="Current postcard"
-              class="w-[406px] h-[509.49px] object-cover"
+              class="w-[80vw] sm:w-[406px] h-[420px] sm:h-[509.49px] object-cover"
             />
           </div>
         </div>
 
         <!-- Navigation Arrows -->
-        <div class="flex items-center gap-4 mt-16 absolute bottom-[-80px] left-1/2 -translate-x-1/2">
+        <div class="flex items-center gap-4 mt-16 absolute bottom-[-60px] sm:bottom-[-80px] left-1/2 -translate-x-1/2">
           <button
             class="p-3 rounded-[32px] hover:bg-[#F2F2F7] overflow-hidden"
             on:click={previousImage}
@@ -136,31 +136,31 @@
       </div>
     {:else}
       <!-- Grid View -->
-      <div class="max-w-[1201px] mx-auto">
-        <div class="flex flex-col gap-[76px]">
+      <div class="w-full max-w-[1201px] mx-auto px-4">
+        <div class="flex flex-col gap-8 sm:gap-[76px]">
           <!-- First Row -->
-          <div class="flex justify-center gap-[76px]">
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 sm:gap-[76px]">
             {#each allImages.slice(0, 3) as imageNum}
-              <div class="w-[324px] pt-4 pb-[50px] px-4 bg-white shadow-[0px_4px_4px_-4px_rgba(12,12,13,0.05)]">
-                <div class="h-[366px] flex justify-center items-center">
+              <div class="w-full sm:w-[324px] pt-4 pb-[50px] px-4 bg-white shadow-[0px_4px_4px_-4px_rgba(12,12,13,0.05)]">
+                <div class="h-[300px] sm:h-[366px] flex justify-center items-center">
                   <img
                     src="/images/img{imageNum}.jpg"
                     alt="Postcard"
-                    class="w-[292.32px] h-[366.83px] object-cover"
+                    class="w-full sm:w-[292.32px] h-full sm:h-[366.83px] object-cover"
                   />
                 </div>
               </div>
             {/each}
           </div>
           <!-- Second Row -->
-          <div class="flex justify-center gap-[76px]">
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 sm:gap-[76px]">
             {#each allImages.slice(3, 6) as imageNum}
-              <div class="w-[324px] pt-4 pb-[50px] px-4 bg-white shadow-[0px_4px_4px_-4px_rgba(12,12,13,0.05)]">
-                <div class="h-[366px] flex justify-center items-center">
+              <div class="w-full sm:w-[324px] pt-4 pb-[50px] px-4 bg-white shadow-[0px_4px_4px_-4px_rgba(12,12,13,0.05)]">
+                <div class="h-[300px] sm:h-[366px] flex justify-center items-center">
                   <img
                     src="/images/img{imageNum}.jpg"
                     alt="Postcard"
-                    class="w-[292.32px] h-[366.83px] object-cover"
+                    class="w-full sm:w-[292.32px] h-full sm:h-[366.83px] object-cover"
                   />
                 </div>
               </div>
