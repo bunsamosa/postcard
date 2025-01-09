@@ -1,6 +1,24 @@
 <script lang="ts">
   import { Button } from "$lib/components/ui/button";
   import { X, ArrowLeft } from "lucide-svelte";
+  import { goto } from "$app/navigation";
+
+  const MAX_IMAGES = 7; // Update this when adding more images
+
+  function getRandomImageNumbers(count: number): number[] {
+    const numbers = Array.from({ length: MAX_IMAGES }, (_, i) => i + 1);
+    for (let i = numbers.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [numbers[i], numbers[j]] = [numbers[j], numbers[i]];
+    }
+    return numbers.slice(0, count);
+  }
+
+  const randomImages = getRandomImageNumbers(4);
+
+  function navigateToSelect() {
+    goto('/select');
+  }
 </script>
 
 <svelte:head>
@@ -13,7 +31,10 @@
     <div class="w-full h-full absolute inset-0 bg-white backdrop-blur-[4px]"></div>
 
     <!-- Close button -->
-    <button class="w-[36px] h-[36px] absolute right-6 top-6 flex items-center justify-center hover:opacity-80">
+    <button
+      class="w-[36px] h-[36px] absolute right-6 top-6 flex items-center justify-center hover:opacity-80"
+      on:click={navigateToSelect}
+    >
       <X class="w-[18px] h-[18px] text-[#AEAEB2]" strokeWidth={2} />
     </button>
 
@@ -59,10 +80,14 @@
 
       <!-- Enter button -->
       <div class="w-full h-[52px] flex flex-col items-center gap-[6px]">
-        <Button variant="default" class="w-full px-[20px] py-[14px] bg-black hover:bg-black/90 rounded-xl flex justify-center items-center gap-2">
+        <button
+          type="button"
+          on:click={navigateToSelect}
+          class="w-full px-[20px] py-[14px] bg-black hover:bg-black/90 rounded-xl flex justify-center items-center gap-2"
+        >
           <span class="text-white text-[17px] leading-[22px]">Enter</span>
           <ArrowLeft class="w-[18px] h-[12px] text-white" />
-        </Button>
+        </button>
       </div>
     </div>
 
@@ -71,28 +96,28 @@
       <!-- Bottom left postcard -->
       <div class="absolute w-[276.77px] h-[369.02px] left-[5%] bottom-[15%] [transform:rotate(3.81deg)] origin-top-left">
         <div class="w-full h-full bg-white shadow-[0px_4px_4px_-4px_rgba(12,12,13,0.05)] p-[13.67px]">
-          <img src="/images/home/indian.png" class="w-full h-full object-cover" alt="Decorative postcard" />
+          <img src="/images/img{randomImages[0]}.jpg" class="w-full h-full object-cover" alt="Decorative postcard" />
         </div>
       </div>
 
       <!-- Top left postcard -->
       <div class="absolute w-[264px] h-[352px] left-[2%] top-[20%] [transform:rotate(-6deg)] origin-top-left">
         <div class="w-full h-full bg-white shadow-[0px_4px_4px_-4px_rgba(12,12,13,0.05)] p-[13.04px]">
-          <img src="/images/home/weekend.png" class="w-full h-full object-cover" alt="Decorative postcard" />
+          <img src="/images/img{randomImages[1]}.jpg" class="w-full h-full object-cover" alt="Decorative postcard" />
         </div>
       </div>
 
       <!-- Top right postcard -->
       <div class="absolute w-[264px] h-[352px] right-[5%] top-[20%] [transform:rotate(6.61deg)] origin-top-right">
         <div class="w-full h-full bg-white shadow-[0px_4px_4px_-4px_rgba(12,12,13,0.05)] p-[13.04px]">
-          <img src="/images/home/tree.png" class="w-full h-full object-cover" alt="Decorative postcard" />
+          <img src="/images/img{randomImages[2]}.jpg" class="w-full h-full object-cover" alt="Decorative postcard" />
         </div>
       </div>
 
       <!-- Bottom right postcard -->
       <div class="absolute w-[260px] h-[346.67px] right-[8%] bottom-[12%] [transform:rotate(-5.03deg)] origin-bottom-right">
-        <div class="w-full h-full bg-[#F5E4C8] shadow-[0px_4px_4px_-4px_rgba(12,12,13,0.05)] p-[12.04px]">
-          <img src="/images/home/coffee.png" class="w-full h-full object-cover" alt="Decorative postcard" />
+        <div class="w-full h-full bg-white shadow-[0px_4px_4px_-4px_rgba(12,12,13,0.05)] p-[12.04px]">
+          <img src="/images/img{randomImages[3]}.jpg" class="w-full h-full object-cover" alt="Decorative postcard" />
         </div>
       </div>
     </div>
