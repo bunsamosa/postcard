@@ -2,21 +2,33 @@
   import { Button } from "$lib/components/ui/button";
   import { ChevronLeft, ChevronRight, LayoutGrid, Layers } from "lucide-svelte";
   import { onMount } from 'svelte';
+  import PostcardModal from "$lib/components/PostcardModal.svelte";
+  import { goto } from "$app/navigation";
 
   const MAX_IMAGES = 7; // Update this when adding more images
   let currentIndex = 0;
   let isStackView = true;
+  let isModalOpen = false;
+  let selectedImage: number | null = null;
 
   function nextImage() {
-    currentIndex = (currentIndex + 1) % MAX_IMAGES;
+    if (isModalOpen) {
+      selectedImage = (selectedImage! % MAX_IMAGES) + 1;
+    } else {
+      currentIndex = (currentIndex + 1) % MAX_IMAGES;
+    }
   }
 
   function previousImage() {
-    currentIndex = (currentIndex - 1 + MAX_IMAGES) % MAX_IMAGES;
+    if (isModalOpen) {
+      selectedImage = ((selectedImage! - 2 + MAX_IMAGES) % MAX_IMAGES) + 1;
+    } else {
+      currentIndex = (currentIndex - 1 + MAX_IMAGES) % MAX_IMAGES;
+    }
   }
 
   function handleKeydown(event: KeyboardEvent) {
-    if (!isStackView) return;
+    if (!isStackView || isModalOpen) return;
 
     if (event.key === 'ArrowLeft') {
       previousImage();
@@ -36,6 +48,22 @@
     isStackView = !isStackView;
   }
 
+  function openModal(imageNum: number) {
+    selectedImage = imageNum;
+    currentIndex = imageNum - 1;
+    isModalOpen = true;
+  }
+
+  function closeModal() {
+    isModalOpen = false;
+    selectedImage = null;
+  }
+
+  function handleEdit() {
+    // Navigate to edit page with selected image using SvelteKit navigation
+    goto(`/edit?image=${selectedImage}`);
+  }
+
   // Generate array of all image indices
   const allImages = Array.from({ length: MAX_IMAGES }, (_, i) => i + 1);
 </script>
@@ -43,6 +71,15 @@
 <svelte:head>
   <link href="https://fonts.googleapis.com/css2?family=Jomhuria&family=Inter:wght@400;500&display=swap" rel="stylesheet">
 </svelte:head>
+
+<PostcardModal 
+  isOpen={isModalOpen}
+  imageUrl={selectedImage ? `/images/img${selectedImage}.jpg` : ''}
+  onClose={closeModal}
+  onEdit={handleEdit}
+  onNext={nextImage}
+  onPrevious={previousImage}
+/>
 
 <div class="w-full min-h-screen bg-white p-2 sm:p-4">
   <!-- Header -->
@@ -110,11 +147,16 @@
         <!-- Main Card -->
         <div class="absolute left-0 top-0 bg-white shadow-[0px_30.29px_83.51px_rgba(12,12,13,0.10)] pt-4 sm:pt-6 pb-[40px] sm:pb-[66.51px] px-[16px] sm:px-[22px]">
           <div class="flex justify-center items-center">
-            <img
-              src="/images/img{allImages[currentIndex]}.jpg"
-              alt="Current postcard"
-              class="w-[80vw] sm:w-[406px] h-[420px] sm:h-[509.49px] object-cover"
-            />
+            <button
+              class="w-full"
+              on:click={() => openModal(allImages[currentIndex])}
+            >
+              <img
+                src="/images/img{allImages[currentIndex]}.jpg"
+                alt="Current postcard"
+                class="w-[80vw] sm:w-[406px] h-[420px] sm:h-[509.49px] object-cover"
+              />
+            </button>
           </div>
         </div>
 
@@ -142,13 +184,18 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 sm:gap-[76px]">
             {#each allImages.slice(0, 3) as imageNum}
               <div class="w-full sm:w-[324px] pt-4 pb-[50px] px-4 bg-white shadow-[0px_4px_4px_-4px_rgba(12,12,13,0.05)]">
-                <div class="h-[300px] sm:h-[366px] flex justify-center items-center">
-                  <img
-                    src="/images/img{imageNum}.jpg"
-                    alt="Postcard"
-                    class="w-full sm:w-[292.32px] h-full sm:h-[366.83px] object-cover"
-                  />
-                </div>
+                <button
+                  class="w-full h-full"
+                  on:click={() => openModal(imageNum)}
+                >
+                  <div class="h-[300px] sm:h-[366px] flex justify-center items-center">
+                    <img
+                      src="/images/img{imageNum}.jpg"
+                      alt="Postcard"
+                      class="w-full sm:w-[292.32px] h-full sm:h-[366.83px] object-cover"
+                    />
+                  </div>
+                </button>
               </div>
             {/each}
           </div>
@@ -156,13 +203,18 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 sm:gap-[76px]">
             {#each allImages.slice(3, 6) as imageNum}
               <div class="w-full sm:w-[324px] pt-4 pb-[50px] px-4 bg-white shadow-[0px_4px_4px_-4px_rgba(12,12,13,0.05)]">
-                <div class="h-[300px] sm:h-[366px] flex justify-center items-center">
-                  <img
-                    src="/images/img{imageNum}.jpg"
-                    alt="Postcard"
-                    class="w-full sm:w-[292.32px] h-full sm:h-[366.83px] object-cover"
-                  />
-                </div>
+                <button
+                  class="w-full h-full"
+                  on:click={() => openModal(imageNum)}
+                >
+                  <div class="h-[300px] sm:h-[366px] flex justify-center items-center">
+                    <img
+                      src="/images/img{imageNum}.jpg"
+                      alt="Postcard"
+                      class="w-full sm:w-[292.32px] h-full sm:h-[366.83px] object-cover"
+                    />
+                  </div>
+                </button>
               </div>
             {/each}
           </div>
@@ -178,5 +230,19 @@
   }
   .font-inter {
     font-family: 'Inter', sans-serif;
+  }
+
+  /* Remove all focus and highlight styles */
+  button {
+    -webkit-tap-highlight-color: transparent;
+    outline: none;
+  }
+
+  button:focus {
+    outline: none;
+  }
+
+  button:focus-visible {
+    outline: none;
   }
 </style>
