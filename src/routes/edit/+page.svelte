@@ -47,27 +47,26 @@
 
 <div class="w-full min-h-screen bg-white">
   <!-- Header -->
-  <header class="max-w-[1201px] mx-auto h-16 px-4 relative border-b border-[#F2F2F7]">
-    <div class="absolute left-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
-      <a href="/select" class="flex items-center gap-2 text-[#3D3D3D] hover:text-black">
-        <ArrowLeft class="w-4 h-4" />
-        <span class="text-sm">Choose a different one</span>
+  <header class="max-w-[1201px] mx-auto h-[84px] sm:h-16 px-4 relative">
+    <div class="absolute left-1/2 -translate-x-1/2 top-[6px] sm:top-[14px] flex items-center gap-4">
+      <a href="/select" class="flex items-center text-[#3D3D3D] hover:text-black">
+        <ArrowLeft class="w-6 h-6" />
       </a>
-    </div>
-    <div class="absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2">
-      <h1 class="text-[56px] font-jomhuria leading-[56px] text-black">Edit your postcard</h1>
+      <h1 class="text-[40px] sm:text-[56px] font-jomhuria leading-[40px] sm:leading-[56px] text-black">Edit your postcard</h1>
     </div>
   </header>
 
   <!-- Main Content -->
-  <main class="flex flex-col items-center justify-start px-4 h-[calc(100vh-64px)]" style="padding-top: {isFlipped ? '40px' : '112px'}; padding-bottom: 64px;">
+  <main class="flex flex-col items-center justify-start px-4 h-[calc(100vh-64px)]" style="padding-top: {isFlipped ? '60px' : '112px'}; padding-bottom: 64px;">
     <!-- Postcard -->
-    <div class="relative perspective-1000" style="width: {isFlipped ? '460px' : '680px'}; height: {isFlipped ? '680px' : '460px'}; transition: width 0.7s, height 0.7s;">
-      <div class="w-full h-full transition-all duration-700 transform-style-preserve-3d relative" 
-        style="transform: {isFlipped ? 'rotateY(180deg)' : 'none'};"
+    <div class="relative perspective-1000" style="width: {isFlipped ? '460px' : '680px'}; height: {isFlipped ? '680px' : '460px'}; transition: all 0.7s cubic-bezier(0.23, 1, 0.32, 1);">
+      <div class="w-full h-full transition-all duration-700 transform-style-preserve-3d relative will-change-transform" 
+        style="transform: {isFlipped ? 'rotateY(180deg)' : 'none'}; transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);"
       >
         <!-- Front Side -->
-        <div class="absolute w-full h-full shadow-[0px_30.29px_83.51px_rgba(12,12,13,0.10)] rounded-lg p-6 backface-hidden" style="background-color: {selectedColor};">
+        <div class="absolute w-full h-full shadow-[0px_30.29px_83.51px_rgba(12,12,13,0.10)] rounded-lg p-6 backface-hidden will-change-transform" 
+          style="background-color: {selectedColor}; transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);"
+        >
           <div class="w-full h-full rounded relative">
             <!-- Main Content Area -->
             <div class="flex h-full">
@@ -82,9 +81,9 @@
               </div>
 
               <!-- Right Side with To Section -->
-              <div class="w-[240px] flex flex-col relative border-l" style="border-color: {selectedColor === '#FFFFFF' ? '#E5E5E5' : '#E4CE9E'};">
+              <div class="w-[256px] flex flex-col relative border-l" style="border-color: {selectedColor === '#FFFFFF' ? '#E5E5E5' : '#E4CE9E'};">
                 <!-- Post Card Text -->
-                <div class="absolute right-0 top-0 h-full flex items-center -mr-6">
+                <div class="absolute right-0 top-0 h-full flex items-center -mr-12">
                   <span class="transform rotate-90 origin-center text-[10px] tracking-[0.2em] font-medium" style="color: {selectedColor === '#FFFFFF' ? '#E5E5E5' : '#E4CE9E'};">POST CARD</span>
                 </div>
 
@@ -94,12 +93,12 @@
                 </div>
 
                 <!-- Copyright Text -->
-                <div class="absolute left-[0px] top-[70px] transform -rotate-90 origin-bottom-left">
-                  <span class="text-[10px] whitespace-nowrap" style="color: {selectedColor === '#FFFFFF' ? '#B7B7B7' : '#C1AA8E'};">Woman at a jharokha, © 2023 Sukriya Basu</span>
+                <div class="absolute left-[6px] top-[410px]">
+                  <span class="block transform -rotate-90 origin-top-left text-[10px] whitespace-nowrap" style="color: {selectedColor === '#FFFFFF' ? '#E5E5E5' : '#E4CE9E'};">© 2025 Sukanya Basu</span>
                 </div>
 
                 <!-- To Section -->
-                <div class="px-8 mt-auto mb-16 relative">
+                <div class="pl-8 pr-6 mt-auto mb-16 relative">
                   <p class="text-base mb-4" style="color: {selectedColor === '#FFFFFF' ? '#B7B7B7' : '#C1AA8E'};">To</p>
                   <textarea
                     bind:value={recipientInfo}
@@ -117,12 +116,14 @@
         <div class="absolute w-full h-full bg-white shadow-[0px_30.29px_83.51px_rgba(12,12,13,0.10)] rounded-lg backface-hidden" 
           style="transform: rotateY(180deg);"
         >
-          <div class="w-full h-full p-6">
-            <img
-              src="/images/img{$page.url.searchParams.get('image') || '1'}.jpg"
-              alt="Selected postcard"
-              class="w-full h-full object-contain"
-            />
+          <div class="w-full h-full flex items-center justify-center pt-0 pb-[50px] px-4">
+            <div class="w-[406px] h-[509.49px] flex items-center justify-center">
+              <img
+                src="/images/img{$page.url.searchParams.get('image') || '1'}.jpg"
+                alt="Selected postcard"
+                class="w-full h-full object-cover"
+              />
+            </div>
           </div>
         </div>
       </div>
@@ -214,14 +215,17 @@
 <style>
   .perspective-1000 {
     perspective: 1000px;
+    transform-origin: center center;
   }
 
   .transform-style-preserve-3d {
     transform-style: preserve-3d;
+    transform-origin: center center;
   }
 
   .backface-hidden {
     backface-visibility: hidden;
+    transform-origin: center center;
   }
 
   .rotate-y-180 {
@@ -272,5 +276,15 @@
     width: 100%;
     height: 4px;
     background: transparent;
+  }
+
+  /* Add smooth transitions for all transformations */
+  .transition-all {
+    transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  /* Optimize performance */
+  .will-change-transform {
+    will-change: transform;
   }
 </style> 
