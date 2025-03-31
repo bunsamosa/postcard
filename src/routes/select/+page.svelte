@@ -4,18 +4,48 @@
   import { onMount } from 'svelte';
   import PostcardModal from "$lib/components/PostcardModal.svelte";
   import { goto } from "$app/navigation";
+  import { spring } from 'svelte/motion';
 
   const MAX_IMAGES = 7; // Update this when adding more images
   let currentIndex = 0;
   let isStackView = true;
   let isModalOpen = false;
   let selectedImage: number | null = null;
+  let stackOrder = Array.from({ length: MAX_IMAGES }, (_, i) => i); // Track card order in stack
+  let stackContainer: HTMLElement;
+  let scrollX = spring(0, {
+    stiffness: 0.08,  // Adjusted for better response
+    damping: 0.4      // Increased for more stability
+  });
+
+  function handleWheel(event: WheelEvent) {
+    if (!isStackView || isModalOpen) return;
+    event.preventDefault();
+    
+    // Handle both vertical and horizontal scrolling
+    const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
+    const newX = $scrollX + delta * 0.5;
+    scrollX.set(newX);
+
+    // Check if we should transition to next/previous card
+    if (Math.abs($scrollX) > 120) {
+      if ($scrollX > 0) {
+        previousImage();  // Reversed direction to match natural scroll
+      } else {
+        nextImage();
+      }
+      // Reset scroll position with animation
+      scrollX.set(0, { hard: false });
+    }
+  }
 
   function nextImage() {
     if (isModalOpen) {
       selectedImage = (selectedImage! % MAX_IMAGES) + 1;
     } else {
-      currentIndex = (currentIndex + 1) % MAX_IMAGES;
+      // Move current card to the back of the stack
+      stackOrder = [...stackOrder.slice(1), stackOrder[0]];
+      currentIndex = stackOrder[0];
     }
   }
 
@@ -23,7 +53,9 @@
     if (isModalOpen) {
       selectedImage = ((selectedImage! - 2 + MAX_IMAGES) % MAX_IMAGES) + 1;
     } else {
-      currentIndex = (currentIndex - 1 + MAX_IMAGES) % MAX_IMAGES;
+      // Move last card to the front of the stack
+      stackOrder = [stackOrder[stackOrder.length - 1], ...stackOrder.slice(0, -1)];
+      currentIndex = stackOrder[0];
     }
   }
 
@@ -39,8 +71,14 @@
 
   onMount(() => {
     window.addEventListener('keydown', handleKeydown);
+    if (stackContainer) {
+      stackContainer.addEventListener('wheel', handleWheel, { passive: false });
+    }
     return () => {
       window.removeEventListener('keydown', handleKeydown);
+      if (stackContainer) {
+        stackContainer.removeEventListener('wheel', handleWheel);
+      }
     };
   });
 
@@ -129,30 +167,53 @@
   <main class="flex flex-col items-center justify-center mt-[40px] sm:mt-[85px]">
     {#if isStackView}
       <!-- Stacked Cards View -->
-      <div class="relative w-[90vw] sm:w-[499.30px] h-[500px] sm:h-[645.83px]">
+      <div 
+        class="relative w-[90vw] sm:w-[499.30px] h-[500px] sm:h-[645.83px] card-stack-perspective"
+        bind:this={stackContainer}
+      >
         <!-- Background Cards -->
-        {#each allImages.slice(currentIndex + 1, currentIndex + 4) as imageNum, idx}
+        {#each stackOrder.slice(1, 4) as imageIndex, idx}
           <div
-            class="absolute w-[85vw] sm:w-[450px] h-[460px] sm:h-[600px] bg-white shadow-[18.15px_46.29px_38.12px_rgba(12,12,13,0.10)]"
-            style="left: {20 + (idx * 8)}px; top: {8 + (idx * 8)}px; transform: rotate(1.55deg); transform-origin: top-left;"
+            class="absolute w-[85vw] sm:w-[450px] h-[460px] sm:h-[600px] bg-white transition-transform duration-500 will-change-transform"
+            style="
+              left: {20 + (idx * 12)}px; 
+              top: {12 + (idx * 12)}px; 
+              transform: 
+                translateX({$scrollX * 0.15 * (1 - idx * 0.2)}px)
+                translateZ({-100 - (idx * 20)}px)
+                rotate({2 + (idx * 0.8)}deg); 
+              transform-origin: center;
+              box-shadow: 0px {15 + (idx * 8)}px {25 + (idx * 15)}px rgba(0, 0, 0, 0.08);
+              opacity: {1 - (idx * 0.15)};
+            "
           >
             <img
-              src="/images/img{imageNum}.jpg"
+              src="/images/img{imageIndex + 1}.jpg"
               alt="Background postcard"
-              class="w-full h-full object-cover opacity-50"
+              class="w-full h-full object-cover"
             />
           </div>
         {/each}
 
         <!-- Main Card -->
-        <div class="absolute left-0 top-0 bg-white shadow-[0px_30.29px_83.51px_rgba(12,12,13,0.10)] pt-4 sm:pt-6 pb-[40px] sm:pb-[66.51px] px-[16px] sm:px-[22px]">
+        <div 
+          class="absolute left-0 top-0 bg-white pt-4 sm:pt-6 pb-[40px] sm:pb-[66.51px] px-[16px] sm:px-[22px] transition-all duration-500 will-change-transform hover-card"
+          style="
+            transform-origin: center; 
+            transform: 
+              translateX({$scrollX * 0.15}px)
+              translateZ(0)
+              rotate({$scrollX * 0.005}deg);
+            box-shadow: 0px 25px 50px rgba(0, 0, 0, 0.1);
+          "
+        >
           <div class="flex justify-center items-center">
             <button
-              class="w-full"
-              on:click={() => openModal(allImages[currentIndex])}
+              class="w-full relative overflow-hidden"
+              on:click={() => openModal(stackOrder[0] + 1)}
             >
               <img
-                src="/images/img{allImages[currentIndex]}.jpg"
+                src="/images/img{stackOrder[0] + 1}.jpg"
                 alt="Current postcard"
                 class="w-[80vw] sm:w-[406px] h-[420px] sm:h-[509.49px] object-cover"
               />
@@ -163,13 +224,13 @@
         <!-- Navigation Arrows -->
         <div class="flex items-center gap-4 mt-16 absolute bottom-[-60px] sm:bottom-[-80px] left-1/2 -translate-x-1/2">
           <button
-            class="p-3 rounded-[32px] hover:bg-[#F2F2F7] overflow-hidden"
+            class="p-3 rounded-[32px] hover:bg-[#F2F2F7] overflow-hidden transition-colors duration-200"
             on:click={previousImage}
           >
             <ChevronLeft class="w-5 h-5 text-[#5A5A5A]" strokeWidth={2} />
           </button>
           <button
-            class="p-3 rounded-[32px] hover:bg-[#F2F2F7] overflow-hidden"
+            class="p-3 rounded-[32px] hover:bg-[#F2F2F7] overflow-hidden transition-colors duration-200"
             on:click={nextImage}
           >
             <ChevronRight class="w-5 h-5 text-[#5A5A5A]" strokeWidth={2} />
@@ -183,7 +244,9 @@
           <!-- First Row -->
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 sm:gap-[76px]">
             {#each allImages.slice(0, 3) as imageNum}
-              <div class="w-full sm:w-[324px] pt-4 pb-[50px] px-4 bg-white shadow-[0px_4px_4px_-4px_rgba(12,12,13,0.05)]">
+              <div class="w-full sm:w-[324px] pt-4 pb-[50px] px-4 bg-white transition-all duration-500 will-change-transform hover-card"
+                style="box-shadow: 0px 25px 50px rgba(0, 0, 0, 0.1);"
+              >
                 <button
                   class="w-full h-full"
                   on:click={() => openModal(imageNum)}
@@ -202,7 +265,9 @@
           <!-- Second Row -->
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 sm:gap-[76px]">
             {#each allImages.slice(3, 6) as imageNum}
-              <div class="w-full sm:w-[324px] pt-4 pb-[50px] px-4 bg-white shadow-[0px_4px_4px_-4px_rgba(12,12,13,0.05)]">
+              <div class="w-full sm:w-[324px] pt-4 pb-[50px] px-4 bg-white transition-all duration-500 will-change-transform hover-card"
+                style="box-shadow: 0px 25px 50px rgba(0, 0, 0, 0.1);"
+              >
                 <button
                   class="w-full h-full"
                   on:click={() => openModal(imageNum)}
@@ -232,10 +297,39 @@
     font-family: 'Inter', sans-serif;
   }
 
-  /* Remove all focus and highlight styles */
+  .card-stack-perspective {
+    perspective: 2500px;
+    perspective-origin: 75% 50%;
+    transform-style: preserve-3d;
+  }
+
+  .transition-transform {
+    transition-property: transform;
+    transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+    transition-duration: 0.5s;
+  }
+
+  .will-change-transform {
+    will-change: transform;
+    backface-visibility: hidden;
+    transform-style: preserve-3d;
+  }
+
+  /* Smooth transitions */
+  .transition-all {
+    transition: all 400ms cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  .transition-colors {
+    transition-property: background-color, border-color, color, fill, stroke;
+    transition-timing-function: cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  /* Remove button styles */
   button {
     -webkit-tap-highlight-color: transparent;
     outline: none;
+    transform-style: preserve-3d;
   }
 
   button:focus {
@@ -244,5 +338,15 @@
 
   button:focus-visible {
     outline: none;
+  }
+
+  .hover-card {
+    transition: all 400ms cubic-bezier(0.23, 1, 0.32, 1);
+    transform-origin: center;
+  }
+
+  .hover-card:hover {
+    transform: scale(1.02) translateY(-12px) !important;
+    box-shadow: 0px 40px 80px rgba(0, 0, 0, 0.15) !important;
   }
 </style>
