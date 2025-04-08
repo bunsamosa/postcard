@@ -11,6 +11,7 @@
   let isFontSelectorOpen = false;
   let isColorSelectorOpen = false;
   let selectedFont = "Caveat";
+  let closeTimeout: ReturnType<typeof setTimeout>;
   
   const fonts = [
     { name: "Caveat", preview: "Aa", class: "font-caveat" },
@@ -38,6 +39,17 @@
   function handleSend() {
     // TODO: Implement send functionality
     console.log("Sending postcard...");
+  }
+
+  function handleFontMenuEnter() {
+    clearTimeout(closeTimeout);
+    isFontSelectorOpen = true;
+  }
+
+  function handleFontMenuLeave() {
+    closeTimeout = setTimeout(() => {
+      isFontSelectorOpen = false;
+    }, 100);
   }
 </script>
 
@@ -133,20 +145,22 @@
     <div class="fixed bottom-[84px] left-1/2 -translate-x-1/2">
       <div class="inline-flex items-center bg-white rounded-[16px] shadow-[0px_2px_20px_rgba(0,0,0,0.1)] p-1">
         <!-- Font Selector -->
-        <div 
-          class="relative group"
-          on:mouseenter={() => isFontSelectorOpen = true}
-          on:mouseleave={() => isFontSelectorOpen = false}
-        >
-          <button class="w-11 h-11 flex items-center justify-center rounded-[8px] hover:bg-[#F2F2F7] text-[#3D3D3D] transition-colors">
+        <div class="relative">
+          <button 
+            class="w-11 h-11 flex items-center justify-center rounded-[8px] hover:bg-[#F2F2F7] text-[#3D3D3D] transition-colors"
+            on:mouseenter={handleFontMenuEnter}
+            on:mouseleave={handleFontMenuLeave}
+          >
             <span class="{selectedFont === 'Caveat' ? 'font-caveat' : selectedFont === 'Courier Prime' ? 'font-courier-prime' : 'font-eb-garamond'} {selectedFont === 'Caveat' ? 'text-[24px]' : 'text-[20px]'}">Aa</span>
           </button>
 
           {#if isFontSelectorOpen}
             <div 
-              class="font-selector-menu absolute top-0 left-0 -translate-y-full bg-white rounded-[16px] shadow-[0px_2px_20px_rgba(0,0,0,0.1)] overflow-hidden min-w-[120px] transition-all duration-200 ease-out origin-bottom-left mt-[-4px]"
+              class="font-selector-menu absolute top-0 left-0 -translate-y-full bg-white rounded-[16px] shadow-[0px_2px_20px_rgba(0,0,0,0.1)] overflow-hidden min-w-[120px] transition-all duration-200 ease-out origin-bottom-left mt-[-8px]"
               in:scale={{ duration: 200, start: 0.95, opacity: 0 }}
               out:scale={{ duration: 150, start: 0.95, opacity: 0 }}
+              on:mouseenter={handleFontMenuEnter}
+              on:mouseleave={handleFontMenuLeave}
             >
               {#each fonts as font}
                 <button
