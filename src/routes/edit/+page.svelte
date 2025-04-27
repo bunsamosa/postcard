@@ -12,6 +12,7 @@
   let isColorSelectorOpen = false;
   let selectedFont = "Caveat";
   let closeTimeout: ReturnType<typeof setTimeout>;
+  let colorCloseTimeout: ReturnType<typeof setTimeout>;
   
   const fonts = [
     { name: "Caveat", preview: "Aa", class: "font-caveat" },
@@ -51,6 +52,17 @@
       isFontSelectorOpen = false;
     }, 100);
   }
+
+  function handleColorMenuEnter() {
+    clearTimeout(colorCloseTimeout);
+    isColorSelectorOpen = true;
+  }
+
+  function handleColorMenuLeave() {
+    colorCloseTimeout = setTimeout(() => {
+      isColorSelectorOpen = false;
+    }, 100);
+  }
 </script>
 
 <svelte:head>
@@ -71,9 +83,9 @@
   <!-- Main Content -->
   <main class="flex flex-col items-center justify-start px-4 h-[calc(100vh-64px)]" style="padding-top: {isFlipped ? '60px' : '112px'}; padding-bottom: 64px;">
     <!-- Postcard -->
-    <div class="relative perspective-1000" style="width: {isFlipped ? '460px' : '680px'}; height: {isFlipped ? '680px' : '460px'}; transition: all 0.7s cubic-bezier(0.23, 1, 0.32, 1);">
-      <div class="w-full h-full transition-all duration-700 transform-style-preserve-3d relative will-change-transform" 
-        style="transform: {isFlipped ? 'rotateY(180deg)' : 'none'}; transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);"
+    <div class="relative perspective-1000" style="width: {isFlipped ? '600px' : '600px'}; height: {isFlipped ? '450px' : '450px'}; transition: all 0.35s cubic-bezier(0.3, 0, 0.2, 1); transform: {isFlipped ? 'translateY(40px)' : 'translateY(0)'};">
+      <div class="w-full h-full transition-all duration-350 transform-style-preserve-3d relative will-change-transform" 
+        style="transform: {isFlipped ? 'rotateY(180deg) rotate(90deg)' : 'none'}; transition: transform 0.35s cubic-bezier(0.3, 0, 0.2, 1);"
       >
         <!-- Front Side -->
         <div class="absolute w-full h-full shadow-[0px_30.29px_83.51px_rgba(12,12,13,0.10)] rounded-lg p-6 backface-hidden will-change-transform" 
@@ -87,8 +99,8 @@
                 <textarea
                   bind:value={message}
                   placeholder="Write here"
-                  class="w-full h-full resize-none border-none focus:outline-none focus:ring-0 text-2xl bg-transparent {selectedFont === 'Caveat' ? 'placeholder:text-[24px]' : 'placeholder:text-[20px]'} {selectedFont === 'Caveat' ? 'font-caveat' : selectedFont === 'Courier Prime' ? 'font-courier-prime' : 'font-eb-garamond'}"
-                  style="color: #000000; font-size: {selectedFont === 'Caveat' ? '24px' : '20px'}; --placeholder-color: {selectedColor === '#FFFFFF' ? '#CCCCCC' : '#C1AA8E'};"
+                  class="w-full h-full resize-none border-none focus:outline-none focus:ring-0 text-2xl bg-transparent {selectedFont === 'Caveat' ? 'placeholder:text-[26px]' : 'placeholder:text-[20px]'} {selectedFont === 'Caveat' ? 'font-caveat' : selectedFont === 'Courier Prime' ? 'font-courier-prime' : 'font-eb-garamond'}"
+                  style="color: #000000; font-size: {selectedFont === 'Caveat' ? '26px' : '20px'}; --placeholder-color: {selectedColor === '#FFFFFF' ? '#CCCCCC' : '#C1AA8E'};"
                 ></textarea>
               </div>
 
@@ -115,8 +127,8 @@
                   <textarea
                     bind:value={recipientInfo}
                     placeholder="Name and email"
-                    class="w-full resize-none border-none focus:outline-none focus:ring-0 text-2xl bg-transparent {selectedFont === 'Caveat' ? 'placeholder:text-[24px]' : 'placeholder:text-[20px]'} h-[168px] lined-textarea {selectedFont === 'Caveat' ? 'font-caveat' : selectedFont === 'Courier Prime' ? 'font-courier-prime' : 'font-eb-garamond'}"
-                    style="color: #000000; font-size: {selectedFont === 'Caveat' ? '24px' : '20px'}; --placeholder-color: {selectedColor === '#FFFFFF' ? '#CCCCCC' : '#C1AA8E'}; --line-color: {selectedColor === '#FFFFFF' ? '#E9E9E9' : '#E4CE9E'};"
+                    class="w-full resize-none border-none focus:outline-none focus:ring-0 text-2xl bg-transparent {selectedFont === 'Caveat' ? 'placeholder:text-[26px]' : 'placeholder:text-[20px]'} h-[168px] lined-textarea {selectedFont === 'Caveat' ? 'font-caveat' : selectedFont === 'Courier Prime' ? 'font-courier-prime' : 'font-eb-garamond'}"
+                    style="color: #000000; font-size: {selectedFont === 'Caveat' ? '26px' : '20px'}; --placeholder-color: {selectedColor === '#FFFFFF' ? '#CCCCCC' : '#C1AA8E'}; --line-color: {selectedColor === '#FFFFFF' ? '#E9E9E9' : '#E4CE9E'};"
                   ></textarea>
                 </div>
               </div>
@@ -125,15 +137,15 @@
         </div>
 
         <!-- Back Side -->
-        <div class="absolute w-full h-full bg-white shadow-[0px_30.29px_83.51px_rgba(12,12,13,0.10)] rounded-lg backface-hidden" 
-          style="transform: rotateY(180deg);"
+        <div class="absolute w-full h-full shadow-[0px_30.29px_83.51px_rgba(12,12,13,0.10)] rounded-lg backface-hidden" 
+          style="transform: rotateY(180deg); background-color: {selectedColor === '#FFEDB5' ? '#FFFCF2' : '#FFFFFF'};"
         >
-          <div class="w-full h-full flex items-center justify-center pt-0 pb-[50px] px-4">
+          <div class="w-full h-full flex items-center justify-center">
             <div class="w-[406px] h-[509.49px] flex items-center justify-center">
               <img
                 src="/images/img{$page.url.searchParams.get('image') || '1'}.jpg"
                 alt="Selected postcard"
-                class="w-full h-full object-cover"
+                class="w-full h-full object-cover transform rotate-90"
               />
             </div>
           </div>
@@ -180,20 +192,22 @@
         </button>
 
         <!-- Color Selector -->
-        <div 
-          class="relative group"
-          on:mouseenter={() => isColorSelectorOpen = true}
-          on:mouseleave={() => isColorSelectorOpen = false}
-        >
-          <button class="w-11 h-11 flex items-center justify-center rounded-[8px] hover:bg-[#F2F2F7] transition-colors">
+        <div class="relative">
+          <button 
+            class="w-11 h-11 flex items-center justify-center rounded-[8px] hover:bg-[#F2F2F7] transition-colors"
+            on:mouseenter={handleColorMenuEnter}
+            on:mouseleave={handleColorMenuLeave}
+          >
             <div class="w-5 h-5 rounded-full border border-[#E5E5EA]" style="background-color: {selectedColor};"></div>
           </button>
 
           {#if isColorSelectorOpen}
             <div 
-              class="color-selector-menu absolute top-0 left-0 -translate-y-full bg-white rounded-[16px] shadow-[0px_2px_20px_rgba(0,0,0,0.1)] overflow-hidden min-w-[120px] transition-all duration-200 ease-out origin-bottom-left mt-[-4px]"
+              class="color-selector-menu absolute top-0 left-0 -translate-y-full bg-white rounded-[16px] shadow-[0px_2px_20px_rgba(0,0,0,0.1)] overflow-hidden min-w-[120px] transition-all duration-200 ease-out origin-bottom-left mt-[-8px]"
               in:scale={{ duration: 200, start: 0.95, opacity: 0 }}
               out:scale={{ duration: 150, start: 0.95, opacity: 0 }}
+              on:mouseenter={handleColorMenuEnter}
+              on:mouseleave={handleColorMenuLeave}
             >
               {#each colors as color}
                 <button
