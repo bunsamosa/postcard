@@ -5,6 +5,7 @@
   import PostcardModal from "$lib/components/PostcardModal.svelte";
   import { goto } from "$app/navigation";
   import { spring } from 'svelte/motion';
+  import { fade, fly } from 'svelte/transition';
 
   const MAX_IMAGES = 7; // Update this when adding more images
   let currentIndex = 0;
@@ -164,7 +165,7 @@
   </header>
 
   <!-- Main Content -->
-  <main class="flex flex-col items-center justify-center mt-[40px] sm:mt-[85px]">
+  <main class="flex flex-col items-center justify-center mt-[20px] sm:mt-[65px]">
     {#if isStackView}
       <!-- Stacked Cards View -->
       <div 
@@ -243,9 +244,12 @@
         <div class="flex flex-col gap-8 sm:gap-[76px]">
           <!-- First Row -->
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 sm:gap-[76px]">
-            {#each allImages.slice(0, 3) as imageNum}
-              <div class="w-full sm:w-[324px] pt-4 pb-[50px] px-4 bg-white transition-all duration-500 will-change-transform hover-card"
+            {#each allImages.slice(0, 3) as imageNum, i}
+              <div 
+                class="w-full sm:w-[324px] pt-4 pb-[50px] px-4 bg-white transition-all duration-500 will-change-transform hover-card"
                 style="box-shadow: 0px 25px 50px rgba(0, 0, 0, 0.1);"
+                in:fly={{ y: 200, duration: 600, delay: i * 150 }}
+                out:fade={{ duration: 300 }}
               >
                 <button
                   class="w-full h-full"
@@ -264,9 +268,12 @@
           </div>
           <!-- Second Row -->
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 sm:gap-[76px]">
-            {#each allImages.slice(3, 6) as imageNum}
-              <div class="w-full sm:w-[324px] pt-4 pb-[50px] px-4 bg-white transition-all duration-500 will-change-transform hover-card"
+            {#each allImages.slice(3, 6) as imageNum, i}
+              <div 
+                class="w-full sm:w-[324px] pt-4 pb-[50px] px-4 bg-white transition-all duration-500 will-change-transform hover-card"
                 style="box-shadow: 0px 25px 50px rgba(0, 0, 0, 0.1);"
+                in:fly={{ y: 200, duration: 600, delay: (i + 3) * 150 }}
+                out:fade={{ duration: 300 }}
               >
                 <button
                   class="w-full h-full"
