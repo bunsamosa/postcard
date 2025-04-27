@@ -4,13 +4,22 @@
   import { fade } from 'svelte/transition';
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
+  import { goto } from '$app/navigation';
 
   export let isOpen: boolean = false;
-  export let imageUrl: string;
+  export let imageNumber: number = 1;
   export let onClose: () => void;
   export let onEdit: () => void;
   export let onNext: () => void;
   export let onPrevious: () => void;
+
+  // Function to get the correct image extension
+  function getImagePath(imageNum: number): string {
+    if (imageNum === 9 || imageNum === 10) {
+      return `/images/img${imageNum}.png`;
+    }
+    return `/images/img${imageNum}.jpg`;
+  }
 
   function handleKeydown(event: KeyboardEvent) {
     if (!isOpen) return;
@@ -21,6 +30,8 @@
       onNext();
     } else if (event.key === 'ArrowLeft') {
       onPrevious();
+    } else if (event.key === 'Enter') {
+      onEdit();
     }
     
     // Prevent all keyboard events while modal is open
@@ -68,12 +79,12 @@
       </button>
 
       <!-- Image -->
-      <div class="bg-white pt-6 pb-[75px] px-6 shadow-[0px_30.29px_83.51px_rgba(12,12,13,0.10)]">
-        <div class="flex justify-center items-center">
+      <div class="bg-white p-4 shadow-[0px_30.29px_83.51px_rgba(12,12,13,0.10)] w-[453.6px]">
+        <div class="h-[560px] flex justify-center items-center">
           <img
-            src={imageUrl}
+            src={getImagePath(imageNumber)}
             alt="Selected postcard"
-            class="w-[406px] h-[509.49px] object-cover"
+            class="w-[409.248px] h-full object-cover"
           />
         </div>
       </div>

@@ -7,7 +7,7 @@
   import { spring } from 'svelte/motion';
   import { fade, fly } from 'svelte/transition';
 
-  const MAX_IMAGES = 7; // Update this when adding more images
+  const MAX_IMAGES = 12; // Updated from 10 to 12 to include all images
   let currentIndex = 0;
   let isStackView = true;
   let isModalOpen = false;
@@ -18,6 +18,14 @@
     stiffness: 0.08,  // Adjusted for better response
     damping: 0.4      // Increased for more stability
   });
+
+  // Function to get the correct image extension
+  function getImagePath(imageNum: number): string {
+    if (imageNum === 9 || imageNum === 10) {
+      return `/images/img${imageNum}.png`;
+    }
+    return `/images/img${imageNum}.jpg`;
+  }
 
   function handleWheel(event: WheelEvent) {
     if (!isStackView || isModalOpen) return;
@@ -109,11 +117,12 @@
 
 <svelte:head>
   <link href="https://fonts.googleapis.com/css2?family=Jomhuria&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
 </svelte:head>
 
 <PostcardModal 
   isOpen={isModalOpen}
-  imageUrl={selectedImage ? `/images/img${selectedImage}.jpg` : ''}
+  imageNumber={selectedImage || 1}
   onClose={closeModal}
   onEdit={handleEdit}
   onNext={nextImage}
@@ -131,25 +140,16 @@
     <!-- View toggles -->
     <div class="absolute left-1/2 -translate-x-1/2 top-[48px] sm:top-[14px] flex items-center gap-2">
       <button
-        class="p-[9px] {isStackView ? 'bg-[#EDF2F8]' : ''} rounded-[75px] hover:bg-[#E2E9F2]"
+        class="w-10 h-10 flex items-center justify-center rounded-full {isStackView ? 'bg-[#F2F2F7]' : ''} hover:bg-[#F2F2F7] transition-colors duration-200"
         on:click={() => isStackView = true}
       >
-        <div class="w-[18px] h-[18px] relative">
-          <div class="absolute left-[1.5px] top-[1.5px] w-[15px] h-[7.5px] border-[1.5px] border-[#4D4D4D]"></div>
-          <div class="absolute left-[1.5px] top-[12.75px] w-[15px] h-[3.75px] border-[1.5px] border-[#4D4D4D]"></div>
-          <div class="absolute left-[1.5px] top-[9px] w-[15px] h-[3.75px] border-[1.5px] border-[#4D4D4D]"></div>
-        </div>
+        <span class="material-symbols-outlined text-[24px] {isStackView ? 'text-black' : 'text-[#4D4D4D]'}">photo_prints</span>
       </button>
       <button
-        class="p-[9px] {!isStackView ? 'bg-[#EDF2F8]' : ''} rounded-[75px] hover:bg-[#F2F2F7]"
+        class="w-10 h-10 flex items-center justify-center rounded-full {!isStackView ? 'bg-[#F2F2F7]' : ''} hover:bg-[#F2F2F7] transition-colors duration-200"
         on:click={() => isStackView = false}
       >
-        <div class="w-[18px] h-[18px] relative">
-          <div class="absolute left-[2.25px] top-[2.25px] w-[5.25px] h-[5.25px] border-[1.5px] border-[#4D4D4D]"></div>
-          <div class="absolute left-[10.5px] top-[2.25px] w-[5.25px] h-[5.25px] border-[1.5px] border-[#4D4D4D]"></div>
-          <div class="absolute left-[10.5px] top-[10.5px] w-[5.25px] h-[5.25px] border-[1.5px] border-[#4D4D4D]"></div>
-          <div class="absolute left-[2.25px] top-[10.5px] w-[5.25px] h-[5.25px] border-[1.5px] border-[#4D4D4D]"></div>
-        </div>
+        <span class="material-symbols-outlined text-[24px] {!isStackView ? 'text-black' : 'text-[#4D4D4D]'}">grid_view</span>
       </button>
     </div>
 
@@ -189,7 +189,7 @@
             "
           >
             <img
-              src="/images/img{imageIndex + 1}.jpg"
+              src={getImagePath(imageIndex + 1)}
               alt="Background postcard"
               class="w-full h-full object-cover"
             />
@@ -198,7 +198,7 @@
 
         <!-- Main Card -->
         <div 
-          class="absolute left-0 top-0 bg-white pt-4 sm:pt-6 pb-[40px] sm:pb-[66.51px] px-[16px] sm:px-[22px] transition-all duration-500 will-change-transform hover-card"
+          class="absolute left-0 top-0 bg-white p-4 transition-all duration-500 will-change-transform hover-card"
           style="
             transform-origin: center; 
             transform: 
@@ -213,11 +213,11 @@
               class="w-full relative overflow-hidden"
               on:click={() => openModal(stackOrder[0] + 1)}
             >
-              <img
-                src="/images/img{stackOrder[0] + 1}.jpg"
-                alt="Current postcard"
-                class="w-[80vw] sm:w-[406px] h-[420px] sm:h-[509.49px] object-cover"
-              />
+            <img
+                src={getImagePath(stackOrder[0] + 1)}
+              alt="Current postcard"
+                class="w-[80vw] sm:w-[406px] h-[477.49px] sm:h-[577.49px] object-cover"
+            />
             </button>
           </div>
         </div>
@@ -246,7 +246,7 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 sm:gap-[76px]">
             {#each allImages.slice(0, 3) as imageNum, i}
               <div 
-                class="w-full sm:w-[324px] pt-4 pb-[50px] px-4 bg-white transition-all duration-500 will-change-transform hover-card"
+                class="w-full sm:w-[324px] p-4 bg-white transition-all duration-500 will-change-transform hover-card"
                 style="box-shadow: 0px 25px 50px rgba(0, 0, 0, 0.1);"
                 in:fly={{ y: 200, duration: 600, delay: i * 150 }}
                 out:fade={{ duration: 300 }}
@@ -255,13 +255,13 @@
                   class="w-full h-full"
                   on:click={() => openModal(imageNum)}
                 >
-                  <div class="h-[300px] sm:h-[366px] flex justify-center items-center">
-                    <img
-                      src="/images/img{imageNum}.jpg"
-                      alt="Postcard"
-                      class="w-full sm:w-[292.32px] h-full sm:h-[366.83px] object-cover"
-                    />
-                  </div>
+                  <div class="h-[334px] sm:h-[400px] flex justify-center items-center">
+                  <img
+                      src={getImagePath(imageNum)}
+                    alt="Postcard"
+                      class="w-full sm:w-[292.32px] object-cover"
+                  />
+                </div>
                 </button>
               </div>
             {/each}
@@ -270,7 +270,7 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 sm:gap-[76px]">
             {#each allImages.slice(3, 6) as imageNum, i}
               <div 
-                class="w-full sm:w-[324px] pt-4 pb-[50px] px-4 bg-white transition-all duration-500 will-change-transform hover-card"
+                class="w-full sm:w-[324px] p-4 bg-white transition-all duration-500 will-change-transform hover-card"
                 style="box-shadow: 0px 25px 50px rgba(0, 0, 0, 0.1);"
                 in:fly={{ y: 200, duration: 600, delay: (i + 3) * 150 }}
                 out:fade={{ duration: 300 }}
@@ -279,13 +279,61 @@
                   class="w-full h-full"
                   on:click={() => openModal(imageNum)}
                 >
-                  <div class="h-[300px] sm:h-[366px] flex justify-center items-center">
+                  <div class="h-[334px] sm:h-[400px] flex justify-center items-center">
                     <img
-                      src="/images/img{imageNum}.jpg"
+                      src={getImagePath(imageNum)}
                       alt="Postcard"
-                      class="w-full sm:w-[292.32px] h-full sm:h-[366.83px] object-cover"
+                      class="w-full sm:w-[292.32px] object-cover"
                     />
                   </div>
+                </button>
+              </div>
+            {/each}
+          </div>
+          <!-- Third Row -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 sm:gap-[76px]">
+            {#each allImages.slice(6, 9) as imageNum, i}
+              <div 
+                class="w-full sm:w-[324px] p-4 bg-white transition-all duration-500 will-change-transform hover-card"
+                style="box-shadow: 0px 25px 50px rgba(0, 0, 0, 0.1);"
+                in:fly={{ y: 200, duration: 600, delay: (i + 6) * 150 }}
+                out:fade={{ duration: 300 }}
+              >
+                <button
+                  class="w-full h-full"
+                  on:click={() => openModal(imageNum)}
+                >
+                  <div class="h-[334px] sm:h-[400px] flex justify-center items-center">
+                  <img
+                      src={getImagePath(imageNum)}
+                      alt="Postcard"
+                      class="w-full sm:w-[292.32px] object-cover"
+                    />
+                  </div>
+                </button>
+              </div>
+            {/each}
+          </div>
+          <!-- Fourth Row -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 sm:gap-[76px]">
+            {#each allImages.slice(9, 12) as imageNum, i}
+              <div 
+                class="w-full sm:w-[324px] p-4 bg-white transition-all duration-500 will-change-transform hover-card"
+                style="box-shadow: 0px 25px 50px rgba(0, 0, 0, 0.1);"
+                in:fly={{ y: 200, duration: 600, delay: (i + 9) * 150 }}
+                out:fade={{ duration: 300 }}
+              >
+                <button
+                  class="w-full h-full"
+                  on:click={() => openModal(imageNum)}
+                >
+                  <div class="h-[334px] sm:h-[400px] flex justify-center items-center">
+                    <img
+                      src={getImagePath(imageNum)}
+                    alt="Postcard"
+                      class="w-full sm:w-[292.32px] object-cover"
+                  />
+                </div>
                 </button>
               </div>
             {/each}
