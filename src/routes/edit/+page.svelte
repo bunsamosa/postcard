@@ -3,16 +3,53 @@
   import { Button } from "$lib/components/ui/button";
   import { page } from "$app/stores";
   import { scale } from "svelte/transition";
+  import { goto } from "$app/navigation";
+  import { postcardStore } from "$lib/stores/postcard";
   
   let isFlipped = false;
-  let selectedColor = "#FFFFFF";
-  let message = "";
-  let recipientInfo = "";
   let isFontSelectorOpen = false;
   let isColorSelectorOpen = false;
-  let selectedFont = "Caveat";
   let closeTimeout: ReturnType<typeof setTimeout>;
   let colorCloseTimeout: ReturnType<typeof setTimeout>;
+
+  // Initialize local state
+  let message = $postcardStore.message;
+  let recipientInfo = $postcardStore.recipientInfo;
+  let selectedFont = $postcardStore.selectedFont;
+  let selectedColor = $postcardStore.selectedColor;
+
+  // Stamps data
+  const stamps = [
+    { name: "Stamp 1", path: "/images/stamps/stamp1.jpg" },
+    { name: "Stamp 2", path: "/images/stamps/stamp2.jpg" },
+    { name: "Stamp 3", path: "/images/stamps/stamp3.jpg" },
+    { name: "Stamp 4", path: "/images/stamps/stamp4.jpg" },
+    { name: "Stamp 5", path: "/images/stamps/stamp5.jpg" },
+    { name: "Stamp 6", path: "/images/stamps/stamp6.jpg" },
+    { name: "Stamp 7", path: "/images/stamps/stamp7.jpg" },
+    { name: "Stamp 8", path: "/images/stamps/stamp8.jpg" },
+    { name: "Stamp 9", path: "/images/stamps/stamp9.jpg" },
+    { name: "Stamp 10", path: "/images/stamps/stamp10.jpg" },
+    { name: "Stamp 11", path: "/images/stamps/stamp11.jpg" },
+    { name: "Stamp 12", path: "/images/stamps/stamp12.jpg" },
+    { name: "Stamp 13", path: "/images/stamps/stamp13.jpg" },
+    { name: "Stamp 14", path: "/images/stamps/stamp14.jpg" }
+  ];
+
+  // Get stamp from store
+  let selectedStamp = stamps[$postcardStore.selectedStamp - 1];
+
+  // Update store when values change
+  $: {
+    postcardStore.set({
+      message,
+      recipientInfo,
+      selectedFont,
+      selectedColor,
+      selectedImage: $page.url.searchParams.get('image') || '1',
+      selectedStamp: $postcardStore.selectedStamp
+    });
+  }
   
   const fonts = [
     { name: "Caveat", preview: "Aa", class: "font-caveat" },
@@ -38,8 +75,7 @@
   }
   
   function handleSend() {
-    // TODO: Implement send functionality
-    console.log("Sending postcard...");
+    goto('/post');
   }
 
   function handleFontMenuEnter() {
@@ -63,16 +99,24 @@
       isColorSelectorOpen = false;
     }, 100);
   }
+
+  // Function to get the correct image extension
+  function getImagePath(imageNum: number): string {
+    if (imageNum === 9 || imageNum === 10) {
+      return `/images/img${imageNum}.png`;
+    }
+    return `/images/img${imageNum}.jpg`;
+  }
 </script>
 
 <svelte:head>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500&family=Courier+Prime&family=EB+Garamond&family=Jomhuria&display=swap" rel="stylesheet">
 </svelte:head>
 
-<div class="w-full min-h-screen bg-white">
+<div class="w-full h-screen bg-white overflow-hidden">
   <!-- Header -->
-  <header class="max-w-[1201px] mx-auto h-[84px] sm:h-16 px-4 relative">
-    <div class="absolute left-1/2 -translate-x-1/2 top-[6px] sm:top-[14px] flex items-center gap-4">
+  <header class="max-w-[1201px] mx-auto h-[104px] sm:h-[104px] px-4 relative">
+    <div class="absolute left-1/2 -translate-x-1/2 top-[30px] flex items-center gap-4">
       <a href="/select" class="flex items-center text-[#3D3D3D] hover:text-black">
         <ArrowLeft class="w-6 h-6" />
       </a>
@@ -81,17 +125,26 @@
   </header>
 
   <!-- Main Content -->
-  <main class="flex flex-col items-center justify-start px-4 h-[calc(100vh-64px)]" style="padding-top: {isFlipped ? '60px' : '112px'}; padding-bottom: 64px;">
+  <main class="flex flex-col items-center justify-start px-4 h-[calc(100vh-104px)]" style="padding-top: 52px; padding-bottom: 64px;">
     <!-- Postcard -->
     <div class="relative perspective-1000" style="width: {isFlipped ? '600px' : '600px'}; height: {isFlipped ? '450px' : '450px'}; transition: all 0.35s cubic-bezier(0.3, 0, 0.2, 1); transform: {isFlipped ? 'translateY(40px)' : 'translateY(0)'};">
       <div class="w-full h-full transition-all duration-350 transform-style-preserve-3d relative will-change-transform" 
         style="transform: {isFlipped ? 'rotateY(180deg) rotate(90deg)' : 'none'}; transition: transform 0.35s cubic-bezier(0.3, 0, 0.2, 1);"
       >
         <!-- Front Side -->
-        <div class="absolute w-full h-full shadow-[0px_30.29px_83.51px_rgba(12,12,13,0.10)] rounded-lg p-6 backface-hidden will-change-transform" 
+        <div class="absolute w-full h-full shadow-[0px_30.29px_83.51px_rgba(12,12,13,0.10)] rounded-lg backface-hidden will-change-transform" 
           style="background-color: {selectedColor}; transition: transform 0.7s cubic-bezier(0.23, 1, 0.32, 1);"
         >
-          <div class="w-full h-full rounded relative">
+          <div class="w-full h-full rounded relative p-6">
+            <!-- Stamp -->
+            <div class="absolute top-4 right-4">
+              <img 
+                src={selectedStamp.path} 
+                alt={`${selectedStamp.name} postage stamp`} 
+                class="w-16 h-20 object-contain rounded-sm"
+              />
+            </div>
+
             <!-- Main Content Area -->
             <div class="flex h-full">
               <!-- Writing Area -->
@@ -111,11 +164,6 @@
                   <span class="transform rotate-90 origin-center text-[10px] tracking-[0.2em] font-medium" style="color: {selectedColor === '#FFFFFF' ? '#E5E5E5' : '#E4CE9E'};">POST CARD</span>
                 </div>
 
-                <!-- Stamp -->
-                <div class="absolute top-4 right-4">
-                  <img src="/images/india-stamp.png" alt="India postage stamp" class="w-12 h-14 object-contain" />
-                </div>
-
                 <!-- Copyright Text -->
                 <div class="absolute left-[6px] top-[410px]">
                   <span class="block transform -rotate-90 origin-top-left text-[10px] whitespace-nowrap" style="color: {selectedColor === '#FFFFFF' ? '#E5E5E5' : '#E4CE9E'};">© 2025 Sukanya Basu</span>
@@ -126,7 +174,7 @@
                   <p class="text-base mb-4" style="color: {selectedColor === '#FFFFFF' ? '#B7B7B7' : '#C1AA8E'};">To</p>
                   <textarea
                     bind:value={recipientInfo}
-                    placeholder="Name and email"
+                    placeholder="Email"
                     class="w-full resize-none border-none focus:outline-none focus:ring-0 text-2xl bg-transparent {selectedFont === 'Caveat' ? 'placeholder:text-[26px]' : 'placeholder:text-[20px]'} h-[168px] lined-textarea {selectedFont === 'Caveat' ? 'font-caveat' : selectedFont === 'Courier Prime' ? 'font-courier-prime' : 'font-eb-garamond'}"
                     style="color: #000000; font-size: {selectedFont === 'Caveat' ? '26px' : '20px'}; --placeholder-color: {selectedColor === '#FFFFFF' ? '#CCCCCC' : '#C1AA8E'}; --line-color: {selectedColor === '#FFFFFF' ? '#E9E9E9' : '#E4CE9E'};"
                   ></textarea>
@@ -143,7 +191,7 @@
           <div class="w-full h-full flex items-center justify-center">
             <div class="w-[406px] h-[509.49px] flex items-center justify-center">
               <img
-                src="/images/img{$page.url.searchParams.get('image') || '1'}.jpg"
+                src={getImagePath(parseInt($page.url.searchParams.get('image') || '1'))}
                 alt="Selected postcard"
                 class="w-full h-full object-cover transform rotate-90"
               />
@@ -155,11 +203,11 @@
 
     <!-- Toolbar -->
     <div class="fixed bottom-[84px] left-1/2 -translate-x-1/2">
-      <div class="inline-flex items-center bg-white rounded-[16px] shadow-[0px_2px_20px_rgba(0,0,0,0.1)] p-1">
+      <div class="inline-flex items-center bg-white rounded-xl shadow-[0px_2px_20px_rgba(0,0,0,0.1)] p-1">
         <!-- Font Selector -->
         <div class="relative">
           <button 
-            class="w-11 h-11 flex items-center justify-center rounded-[8px] hover:bg-[#F2F2F7] text-[#3D3D3D] transition-colors"
+            class="w-11 h-11 flex items-center justify-center rounded-xl hover:bg-[#F2F2F7] text-[#3D3D3D] transition-colors"
             on:mouseenter={handleFontMenuEnter}
             on:mouseleave={handleFontMenuLeave}
           >
@@ -186,15 +234,10 @@
           {/if}
         </div>
 
-        <!-- Flip Button -->
-        <button class="w-11 h-11 flex items-center justify-center rounded-[8px] hover:bg-[#F2F2F7] text-[#3D3D3D] transition-colors" on:click={handleFlip}>
-          <RotateCw class="w-5 h-5" />
-        </button>
-
         <!-- Color Selector -->
         <div class="relative">
           <button 
-            class="w-11 h-11 flex items-center justify-center rounded-[8px] hover:bg-[#F2F2F7] transition-colors"
+            class="w-11 h-11 flex items-center justify-center rounded-xl hover:bg-[#F2F2F7] transition-colors"
             on:mouseenter={handleColorMenuEnter}
             on:mouseleave={handleColorMenuLeave}
           >
@@ -224,16 +267,22 @@
           {/if}
         </div>
 
+        <!-- Flip Button -->
+        <button class="w-11 h-11 flex items-center justify-center rounded-xl hover:bg-[#F2F2F7] text-[#3D3D3D] transition-colors" on:click={handleFlip}>
+          <RotateCw class="w-5 h-5" />
+        </button>
+
         <!-- Separator -->
         <div class="w-[1px] h-5 bg-[#E5E5EA] mx-1"></div>
 
         <!-- Send Button -->
         <button 
-          class="h-11 px-3 bg-black text-white rounded-[8px] flex items-center gap-2 hover:bg-[#1A1A1A] transition-colors"
+          class="h-11 px-3 rounded-xl flex items-center gap-2 transition-colors {message.trim() ? 'bg-black text-white hover:bg-[#1A1A1A]' : 'bg-[#F2F2F7] text-[#8E8E93] cursor-not-allowed'}"
           on:click={handleSend}
+          disabled={!message.trim()}
         >
           <Send class="w-4 h-4" />
-          <span class="text-sm font-medium">Send</span>
+          <span class="text-sm font-medium">Post</span>
         </button>
       </div>
     </div>
