@@ -5,12 +5,14 @@
   import { scale } from "svelte/transition";
   import { goto } from "$app/navigation";
   import { postcardStore } from "$lib/stores/postcard";
+  import { onMount } from "svelte";
   
   let isFlipped = false;
   let isFontSelectorOpen = false;
   let isColorSelectorOpen = false;
   let closeTimeout: ReturnType<typeof setTimeout>;
   let colorCloseTimeout: ReturnType<typeof setTimeout>;
+  let isStampHovered = false;
 
   // Initialize local state
   let message = $postcardStore.message;
@@ -36,18 +38,25 @@
     { name: "Stamp 14", path: "/images/stamps/stamp14.jpg" }
   ];
 
+  // Get random stamp on page load
+  const randomStampIndex = Math.floor(Math.random() * stamps.length) + 1;
+  postcardStore.update(store => ({
+    ...store,
+    selectedStamp: randomStampIndex
+  }));
+
   // Get stamp from store
   let selectedStamp = stamps[$postcardStore.selectedStamp - 1];
 
   // Update store when values change
   $: {
     postcardStore.set({
+      ...($postcardStore),
       message,
       recipientInfo,
       selectedFont,
       selectedColor,
       selectedImage: $page.url.searchParams.get('image') || '1',
-      selectedStamp: $postcardStore.selectedStamp
     });
   }
   
@@ -100,6 +109,20 @@
     }, 100);
   }
 
+  function handleChangeStamp() {
+    const currentIndex = $postcardStore.selectedStamp;
+    let newIndex;
+    do {
+      newIndex = Math.floor(Math.random() * stamps.length) + 1;
+    } while (newIndex === currentIndex);
+    
+    selectedStamp = stamps[newIndex - 1];
+    postcardStore.update(store => ({
+      ...store,
+      selectedStamp: newIndex
+    }));
+  }
+
   // Function to get the correct image extension
   function getImagePath(imageNum: number): string {
     if (imageNum === 9 || imageNum === 10) {
@@ -111,6 +134,7 @@
 
 <svelte:head>
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500&family=Courier+Prime&family=EB+Garamond&family=Jomhuria&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet" />
 </svelte:head>
 
 <div class="w-full h-screen bg-white overflow-hidden">
@@ -125,9 +149,9 @@
   </header>
 
   <!-- Main Content -->
-  <main class="flex flex-col items-center justify-start px-4 h-[calc(100vh-104px)]" style="padding-top: 52px; padding-bottom: 64px;">
+  <main class="flex-1 flex flex-col items-center justify-center px-4 pb-8">
     <!-- Postcard -->
-    <div class="relative perspective-1000" style="width: {isFlipped ? '600px' : '600px'}; height: {isFlipped ? '450px' : '450px'}; transition: all 0.35s cubic-bezier(0.3, 0, 0.2, 1); transform: {isFlipped ? 'translateY(40px)' : 'translateY(0)'};">
+    <div class="relative perspective-1000 pt-[21px]" style="width: {isFlipped ? '600px' : '600px'}; height: {isFlipped ? '450px' : '450px'}; transition: all 0.35s cubic-bezier(0.3, 0, 0.2, 1); transform: {isFlipped ? 'translateY(40px)' : 'translateY(0)'};">
       <div class="w-full h-full transition-all duration-350 transform-style-preserve-3d relative will-change-transform" 
         style="transform: {isFlipped ? 'rotateY(180deg) rotate(90deg)' : 'none'}; transition: transform 0.35s cubic-bezier(0.3, 0, 0.2, 1);"
       >
@@ -137,13 +161,30 @@
         >
           <div class="w-full h-full rounded relative p-6">
             <!-- Stamp -->
-            <div class="absolute top-4 right-4">
-              <img 
-                src={selectedStamp.path} 
-                alt={`${selectedStamp.name} postage stamp`} 
-                class="w-16 h-20 object-contain rounded-sm"
-              />
-            </div>
+            <button 
+              type="button"
+              class="absolute top-4 right-4 cursor-pointer focus:outline-none"
+              on:mouseenter={() => isStampHovered = true}
+              on:mouseleave={() => isStampHovered = false}
+              on:click={handleChangeStamp}
+            >
+              <div class="relative">
+                <img 
+                  src={selectedStamp.path} 
+                  alt={`${selectedStamp.name} postage stamp`} 
+                  class="w-16 h-20 object-contain rounded-sm transition-opacity duration-200"
+                  style="opacity: {isStampHovered ? '0.5' : '1'}"
+                />
+                {#if isStampHovered}
+                  <div 
+                    class="absolute inset-0 flex items-center justify-center"
+                    transition:scale={{ duration: 200, start: 0.95 }}
+                  >
+                    <span class="material-symbols-outlined text-white text-[24px]">wand_stars</span>
+                  </div>
+                {/if}
+              </div>
+            </button>
 
             <!-- Main Content Area -->
             <div class="flex h-full">
@@ -165,7 +206,7 @@
                 </div>
 
                 <!-- Copyright Text -->
-                <div class="absolute left-[6px] top-[410px]">
+                <div class="absolute left-[6px] top-[380px]">
                   <span class="block transform -rotate-90 origin-top-left text-[10px] whitespace-nowrap" style="color: {selectedColor === '#FFFFFF' ? '#E5E5E5' : '#E4CE9E'};">© 2025 Sukanya Basu</span>
                 </div>
 
@@ -202,12 +243,12 @@
     </div>
 
     <!-- Toolbar -->
-    <div class="fixed bottom-[84px] left-1/2 -translate-x-1/2">
-      <div class="inline-flex items-center bg-white rounded-xl shadow-[0px_2px_20px_rgba(0,0,0,0.1)] p-1">
+    <div class="fixed bottom-[60px] left-1/2 -translate-x-1/2">
+      <div class="inline-flex items-center bg-white rounded-[12px] shadow-[0px_2px_20px_rgba(0,0,0,0.1)] p-1">
         <!-- Font Selector -->
         <div class="relative">
           <button 
-            class="w-11 h-11 flex items-center justify-center rounded-xl hover:bg-[#F2F2F7] text-[#3D3D3D] transition-colors"
+            class="w-11 h-11 flex items-center justify-center rounded-[12px] hover:bg-[#F2F2F7] text-[#3D3D3D] transition-colors"
             on:mouseenter={handleFontMenuEnter}
             on:mouseleave={handleFontMenuLeave}
           >
@@ -216,7 +257,7 @@
 
           {#if isFontSelectorOpen}
             <div 
-              class="font-selector-menu absolute top-0 left-0 -translate-y-full bg-white rounded-[16px] shadow-[0px_2px_20px_rgba(0,0,0,0.1)] overflow-hidden min-w-[120px] transition-all duration-200 ease-out origin-bottom-left mt-[-8px]"
+              class="font-selector-menu absolute top-0 left-0 -translate-y-full bg-white rounded-[12px] shadow-[0px_2px_20px_rgba(0,0,0,0.1)] overflow-hidden min-w-[120px] transition-all duration-200 ease-out origin-bottom-left mt-[-8px]"
               in:scale={{ duration: 200, start: 0.95, opacity: 0 }}
               out:scale={{ duration: 150, start: 0.95, opacity: 0 }}
               on:mouseenter={handleFontMenuEnter}
@@ -237,7 +278,7 @@
         <!-- Color Selector -->
         <div class="relative">
           <button 
-            class="w-11 h-11 flex items-center justify-center rounded-xl hover:bg-[#F2F2F7] transition-colors"
+            class="w-11 h-11 flex items-center justify-center rounded-[12px] hover:bg-[#F2F2F7] transition-colors"
             on:mouseenter={handleColorMenuEnter}
             on:mouseleave={handleColorMenuLeave}
           >
@@ -246,7 +287,7 @@
 
           {#if isColorSelectorOpen}
             <div 
-              class="color-selector-menu absolute top-0 left-0 -translate-y-full bg-white rounded-[16px] shadow-[0px_2px_20px_rgba(0,0,0,0.1)] overflow-hidden min-w-[120px] transition-all duration-200 ease-out origin-bottom-left mt-[-8px]"
+              class="color-selector-menu absolute top-0 left-0 -translate-y-full bg-white rounded-[12px] shadow-[0px_2px_20px_rgba(0,0,0,0.1)] overflow-hidden min-w-[120px] transition-all duration-200 ease-out origin-bottom-left mt-[-8px]"
               in:scale={{ duration: 200, start: 0.95, opacity: 0 }}
               out:scale={{ duration: 150, start: 0.95, opacity: 0 }}
               on:mouseenter={handleColorMenuEnter}
@@ -268,7 +309,7 @@
         </div>
 
         <!-- Flip Button -->
-        <button class="w-11 h-11 flex items-center justify-center rounded-xl hover:bg-[#F2F2F7] text-[#3D3D3D] transition-colors" on:click={handleFlip}>
+        <button class="w-11 h-11 flex items-center justify-center rounded-[12px] hover:bg-[#F2F2F7] text-[#3D3D3D] transition-colors" on:click={handleFlip}>
           <RotateCw class="w-5 h-5" />
         </button>
 
@@ -277,7 +318,7 @@
 
         <!-- Send Button -->
         <button 
-          class="h-11 px-3 rounded-xl flex items-center gap-2 transition-colors {message.trim() ? 'bg-black text-white hover:bg-[#1A1A1A]' : 'bg-[#F2F2F7] text-[#8E8E93] cursor-not-allowed'}"
+          class="h-11 px-3 rounded-[12px] flex items-center gap-2 transition-colors {message.trim() ? 'bg-black text-white hover:bg-[#1A1A1A]' : 'bg-[#F2F2F7] text-[#8E8E93] cursor-not-allowed'}"
           on:click={handleSend}
           disabled={!message.trim()}
         >
