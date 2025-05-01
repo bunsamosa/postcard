@@ -165,7 +165,7 @@
   </header>
 
   <!-- Main Content -->
-  <main class="flex flex-col items-center justify-center mt-[20px] sm:mt-[65px]">
+  <main class="flex flex-col items-center justify-center mt-[0px] sm:mt-[33px]">
     {#if isStackView}
       <!-- Stacked Cards View -->
       <div 
