@@ -53,7 +53,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500&family=Courier+Prime&family=EB+Garamond&family=Jomhuria&display=swap" rel="stylesheet">
 </svelte:head>
 
-<div class="w-full min-h-screen bg-white flex flex-col items-center justify-start py-16 px-4">
+<div class="w-full min-h-screen bg-white flex flex-col items-center justify-start pt-8 pb-16 px-4">
   {#if isLoading}
     <div class="flex items-center justify-center">
       <Loader2 class="w-8 h-8 animate-spin text-black" />
