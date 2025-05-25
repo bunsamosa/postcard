@@ -5,6 +5,7 @@
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
   import { goto } from '$app/navigation';
+  import { imageStore } from '$lib/stores/images';
 
   export let isOpen: boolean = false;
   export let imageNumber: number = 1;
@@ -13,12 +14,19 @@
   export let onNext: () => void;
   export let onPrevious: () => void;
 
-  // Function to get the correct image extension
-  function getImagePath(imageNum: number): string {
-    if (imageNum === 9 || imageNum === 10) {
-      return `/images/img${imageNum}.png`;
+  let currentImageUrl: string = '';
+  let isLoading = true;
+  let error: string | null = null;
+
+  // Subscribe to the store
+  $: ({ isLoading, error } = $imageStore);
+
+  // Update image URL when imageNumber changes
+  $: if (isOpen) {
+    currentImageUrl = imageStore.getImageUrl(imageNumber);
+    if (!$imageStore.images.length) {
+      imageStore.loadImages();
     }
-    return `/images/img${imageNum}.jpg`;
   }
 
   function handleKeydown(event: KeyboardEvent) {
@@ -66,26 +74,37 @@
     <div 
       class="absolute inset-0 bg-white/80 backdrop-blur-sm"
       on:click={onClose}
-    ></div>
-    
-    <!-- Modal content -->
-    <div class="relative z-10">
+    >
       <!-- Close button -->
       <button
-        class="fixed right-6 top-6 p-2 hover:bg-black/5 rounded-full"
+        class="absolute right-6 top-6 p-2 hover:bg-black/5 rounded-full"
         on:click={onClose}
       >
         <X class="w-6 h-6 text-[#3D3D3D]" />
       </button>
-
+    </div>
+    
+    <!-- Modal content -->
+    <div class="relative z-10 -translate-y-6">
       <!-- Image -->
       <div class="bg-white p-4 shadow-[0px_30.29px_83.51px_rgba(12,12,13,0.10)] w-[453.6px]">
         <div class="h-[560px] flex justify-center items-center">
-          <img
-            src={getImagePath(imageNumber)}
-            alt="Selected postcard"
-            class="w-[409.248px] h-full object-cover"
-          />
+          {#if isLoading && !currentImageUrl}
+            <div class="text-gray-500">Loading...</div>
+          {:else if error}
+            <div class="text-red-500">{error}</div>
+          {:else if currentImageUrl}
+            <img
+              src={currentImageUrl}
+              alt="Selected postcard"
+              class="w-[409.248px] h-full object-cover"
+              on:error={() => {
+                error = 'Failed to load image';
+              }}
+            />
+          {:else}
+            <div class="text-gray-500">No image available</div>
+          {/if}
         </div>
       </div>
 
