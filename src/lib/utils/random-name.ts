@@ -11,9 +11,15 @@ const nouns = [
 ];
 
 export function generateRandomName(): string {
-  const adjective = adjectives[Math.floor(Math.random() * adjectives.length)];
-  const noun = nouns[Math.floor(Math.random() * nouns.length)];
-  const randomNum = Math.floor(Math.random() * 1000);
-  
-  return `${adjective}-${noun}-${randomNum}`;
+  // const adjective = adjectives[Math.floor(Math.random() * adjectives.length)];
+  // const noun = nouns[Math.floor(Math.random() * nouns.length)];
+  // const randomNum = Math.floor(Math.random() * 1000);
+  // 
+  // return `${adjective}-${noun}-${randomNum}`;
+
+  // Generate an 8-digit random number
+  const min = 10000000; // Smallest 8-digit number
+  const max = 99999999; // Largest 8-digit number
+  const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+  return randomNumber.toString();
 } 

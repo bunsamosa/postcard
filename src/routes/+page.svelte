@@ -1,3 +1,6 @@
+<script context="module" lang="ts">
+  export const ssr = false;
+</script>
 <script lang="ts">
   import { Button } from "$lib/components/ui/button";
   import { X, ArrowLeft, ArrowRight } from "lucide-svelte";
@@ -38,7 +41,7 @@
 </script>
 
 <svelte:head>
-  <link href="https://fonts.googleapis.com/css2?family=Jomhuria&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Jomhuria&family=Inter:wght@400;500&family=Caveat:wght@400;500&display=swap" rel="stylesheet">
 </svelte:head>
 
 <div class="w-screen h-screen relative bg-white overflow-hidden font-inter">
@@ -55,57 +58,22 @@
     </button>
 
     <!-- Main content -->
-    <div class="absolute left-1/2 top-[15%] sm:top-[20%] -translate-x-1/2 flex flex-col items-center gap-[32px] sm:gap-[56px] w-[min(445px,90%)] px-4 sm:px-0">
-      <div class="flex flex-col items-start gap-[24px] sm:gap-[32px] w-full">
+    <div class="absolute left-1/2 top-[15%] sm:top-[20%] -translate-x-1/2 flex flex-col items-center gap-[32px] w-[min(445px,90%)] px-4 sm:px-0">
+      <div class="flex flex-col items-center gap-[12px] w-full">
         <div class="text-center text-black text-[48px] sm:text-[64px] font-jomhuria font-normal w-full leading-[48px] sm:leading-[64px]">Send a postcard</div>
 
-        <div class="flex flex-col items-start gap-[32px] sm:gap-[42px] w-full">
-          <!-- Step 1 -->
-          <div class="w-full flex items-center gap-[16px] sm:gap-[20px]">
-            <div class="w-[48px] h-[48px] sm:w-[56px] sm:h-[56px] px-[14px] sm:px-[17px] py-[10px] sm:py-[12px] bg-[#F2F2F7] rounded-lg overflow-hidden flex-shrink-0 flex flex-col justify-center items-center">
-              <div class="text-black text-[20px] sm:text-[24px] leading-[30px] sm:leading-[36px]">🎨</div>
-            </div>
-            <div class="flex-1 min-w-0">
-              <span class="text-black text-[16px] sm:text-[20px] leading-[24px] sm:leading-[30px]">Choose a postcard with original artwork from </span>
-              <a
-                href="https://instagram.com/su.kanye"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="text-[#0066CC] hover:text-[#0066CC]/80 text-[16px] sm:text-[20px] leading-[24px] sm:leading-[30px]"
-              >@su.kanye</a>
-              <span class="text-[rgba(60,60,67,0.60)] text-[16px] sm:text-[20px] leading-[24px] sm:leading-[30px]"> (various artists soon)</span>
-            </div>
-          </div>
-
-          <!-- Step 2 -->
-          <div class="w-full flex items-center gap-[16px] sm:gap-[20px]">
-            <div class="w-[48px] h-[48px] sm:w-[56px] sm:h-[56px] px-[14px] sm:px-[17px] py-[10px] sm:py-[12px] bg-[#F2F2F7] rounded-lg overflow-hidden flex-shrink-0 flex flex-col justify-center items-center">
-              <div class="text-black text-[20px] sm:text-[24px] leading-[30px] sm:leading-[36px]">✍️</div>
-            </div>
-            <div class="flex-1 min-w-0">
-              <span class="text-black text-[16px] sm:text-[20px] leading-[24px] sm:leading-[30px]">Write on the postcard the old-fashioned way </span>
-              <span class="text-[rgba(60,60,67,0.60)] text-[16px] sm:text-[20px] leading-[24px] sm:leading-[30px]">(with custom settings of course)</span>
-            </div>
-          </div>
-
-          <!-- Step 3 -->
-          <div class="w-full flex items-center gap-[16px] sm:gap-[20px]">
-            <div class="w-[48px] h-[48px] sm:w-[56px] sm:h-[56px] px-[14px] sm:px-[17px] py-[10px] sm:py-[12px] bg-[#F2F2F7] rounded-lg overflow-hidden flex-shrink-0 flex flex-col justify-center items-center">
-              <div class="text-black text-[20px] sm:text-[24px] leading-[30px] sm:leading-[36px]">📬</div>
-            </div>
-            <div class="flex-1 min-w-0 text-black text-[16px] sm:text-[20px] leading-[24px] sm:leading-[30px]">
-              Post it via email. Reaches instantly ✨
-            </div>
-          </div>
+        <div class="text-center font-caveat text-[22px] sm:text-[26px] leading-[1.5] text-black px-[2px]">
+          There was a time when sending a postcard meant slowing down to share a moment, a thought, or a feeling with friends and family far away. I've always loved that. This is my little way of bringing back that magic digitally.<br>
+          In a world of instant messages, here's a space for art, memories, and words. Each postcard features artwork I've created over the years, and will keep adding to. Send a postcard
         </div>
       </div>
 
       <!-- Enter button -->
-      <div class="w-full h-[48px] sm:h-[52px] flex flex-col items-center gap-[6px]">
+      <div class="w-fit h-[48px] sm:h-[52px] flex flex-col items-center gap-[6px]">
         <button
           type="button"
           on:click={navigateToSelect}
-          class="w-full px-[16px] sm:px-[20px] py-[12px] sm:py-[14px] bg-black hover:bg-black/90 rounded-xl flex justify-center items-center gap-2"
+          class="px-[16px] sm:px-[20px] py-[12px] sm:py-[14px] bg-black hover:bg-black/90 rounded-xl flex justify-center items-center gap-2"
         >
           <span class="text-white text-[16px] sm:text-[17px] leading-[20px] sm:leading-[22px]">Enter</span>
           <ArrowRight class="w-[16px] sm:w-[18px] h-[10px] sm:h-[12px] text-white" />
@@ -149,5 +117,8 @@
 <style>
   .font-jomhuria {
     font-family: 'Jomhuria', cursive;
+  }
+  .font-caveat {
+    font-family: 'Caveat', cursive;
   }
 </style>
