@@ -144,7 +144,7 @@
       <a href="/select" class="flex items-center text-[#3D3D3D] hover:text-black">
         <ArrowLeft class="w-6 h-6" />
       </a>
-      <h1 class="text-[40px] sm:text-[56px] font-jomhuria leading-[40px] sm:leading-[56px] text-black">Edit your postcard</h1>
+      <h1 class="text-[52px] font-jomhuria leading-[52px] text-black">Edit your postcard</h1>
     </div>
   </header>
 
@@ -215,7 +215,7 @@
                   <p class="text-base mb-4" style="color: {selectedColor === '#FFFFFF' ? '#B7B7B7' : '#C1AA8E'};">To</p>
                   <textarea
                     bind:value={recipientInfo}
-                    placeholder="Email"
+                    placeholder="Name"
                     class="w-full resize-none border-none focus:outline-none focus:ring-0 text-2xl bg-transparent {selectedFont === 'Caveat' ? 'placeholder:text-[26px]' : 'placeholder:text-[20px]'} h-[168px] lined-textarea {selectedFont === 'Caveat' ? 'font-caveat' : selectedFont === 'Courier Prime' ? 'font-courier-prime' : 'font-eb-garamond'}"
                     style="color: #000000; font-size: {selectedFont === 'Caveat' ? '26px' : '20px'}; --placeholder-color: {selectedColor === '#FFFFFF' ? '#CCCCCC' : '#C1AA8E'}; --line-color: {selectedColor === '#FFFFFF' ? '#E9E9E9' : '#E4CE9E'};"
                   ></textarea>
@@ -244,7 +244,7 @@
 
     <!-- Toolbar -->
     <div class="fixed bottom-[60px] left-1/2 -translate-x-1/2">
-      <div class="inline-flex items-center bg-white rounded-[12px] shadow-[0px_2px_20px_rgba(0,0,0,0.1)] p-1">
+      <div class="inline-flex items-center bg-white rounded-xl shadow-[0px_2px_20px_rgba(0,0,0,0.1)] p-1">
         <!-- Font Selector -->
         <div class="relative">
           <button 

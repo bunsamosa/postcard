@@ -5,6 +5,9 @@
   import { onMount } from "svelte";
   import { goto } from "$app/navigation";
   import { generateRandomName } from "$lib/utils/random-name";
+  import { supabase } from '$lib/supabaseClient';
+  import { imageStore } from '$lib/stores/images';
+  import { stamps } from '$lib/data/stamps';
   
   let userName = "";
   let colorCloseTimeout: ReturnType<typeof setTimeout>;
@@ -18,25 +21,9 @@
   let copyTimeout: ReturnType<typeof setTimeout>;
   let imageOnTop = false;
   let shareId = "";
+  let showEmailTooltip = false;
+  let currentPostcardImageUrl: string | null = null;
   
-  // Stamps data
-  const stamps = [
-    { name: "Stamp 1", path: "/images/stamps/stamp1.jpg" },
-    { name: "Stamp 2", path: "/images/stamps/stamp2.jpg" },
-    { name: "Stamp 3", path: "/images/stamps/stamp3.jpg" },
-    { name: "Stamp 4", path: "/images/stamps/stamp4.jpg" },
-    { name: "Stamp 5", path: "/images/stamps/stamp5.jpg" },
-    { name: "Stamp 6", path: "/images/stamps/stamp6.jpg" },
-    { name: "Stamp 7", path: "/images/stamps/stamp7.jpg" },
-    { name: "Stamp 8", path: "/images/stamps/stamp8.jpg" },
-    { name: "Stamp 9", path: "/images/stamps/stamp9.jpg" },
-    { name: "Stamp 10", path: "/images/stamps/stamp10.jpg" },
-    { name: "Stamp 11", path: "/images/stamps/stamp11.jpg" },
-    { name: "Stamp 12", path: "/images/stamps/stamp12.jpg" },
-    { name: "Stamp 13", path: "/images/stamps/stamp13.jpg" },
-    { name: "Stamp 14", path: "/images/stamps/stamp14.jpg" }
-  ];
-
   // Get stamp from store
   let selectedStamp = stamps[$postcardStore.selectedStamp - 1];
   
@@ -50,6 +37,21 @@
     selectedStamp = stamps[store.selectedStamp - 1];
   });
   
+  // Subscribe to imageStore for image URL
+  imageStore.subscribe(storeState => {
+    if (storeState.images && selectedImage > 0) {
+      currentPostcardImageUrl = storeState.images[selectedImage - 1]?.url || null;
+    } else if (selectedImage > 0) {
+      // If images are not loaded yet, try to get it directly (might be already in cache from select page)
+      currentPostcardImageUrl = imageStore.getImageUrl(selectedImage);
+    }
+  });
+  
+  // Update image URL when selectedImage changes
+  $: if (selectedImage > 0 && imageStore) {
+    currentPostcardImageUrl = imageStore.getImageUrl(selectedImage);
+  }
+
   function handleEmailIt() {
     // TODO: Implement email functionality
     console.log("Emailing postcard...");
@@ -57,30 +59,38 @@
   
   async function handleCopyLink() {
     try {
-      // Generate a random name for the URL if not already generated
-      if (!shareId) {
-        shareId = generateRandomName();
+      if (!shareId) { // If no shareId exists for this session yet (i.e., not successfully saved)
+        const newShareId = generateRandomName(); // Generate a potential new ID
+        
+        const postcardData = {
+          id: newShareId, // Use the new ID for this save attempt
+          sender_name: userName,
+          message,
+          recipient_info: recipientInfo,
+          selected_font: selectedFont,
+          selected_color: selectedColor,
+          selected_image_id: selectedImage,
+          selected_stamp_id: $postcardStore.selectedStamp,
+          created_at: new Date().toISOString()
+        };
+
+        const { error: insertError } = await supabase.from('postcards-created').insert(postcardData);
+
+        if (insertError) {
+          console.error('Error saving postcard to Supabase:', insertError);
+          if (insertError.code === '23505') { // PostgreSQL unique_violation error code
+            alert('Failed to generate a unique link ID due to a conflict. Please try copying the link again.');
+          } else {
+            alert(`Failed to save postcard: ${insertError.message}`);
+          }
+          return; // Exit without copying or setting the component's shareId
+        }
+        // If save was successful, persist this newShareId for the current session
+        shareId = newShareId;
       }
 
-      // Create the shareable URL with the random name
+      // If we reach here, shareId is set (either from a previous success or just now)
       const shareUrl = `${window.location.origin}/p/${shareId}`;
-      
-      // Store the postcard data in a public database or localStorage
-      const postcardData = {
-        id: shareId,
-        senderName: userName,
-        message,
-        recipientInfo,
-        selectedFont,
-        selectedColor,
-        selectedImage,
-        selectedStamp: $postcardStore.selectedStamp,
-        createdAt: new Date().toISOString()
-      };
-
-      // For now, we'll use localStorage. In a real app, this would be a database call
-      localStorage.setItem(`postcard_${shareId}`, JSON.stringify(postcardData));
-      
       await navigator.clipboard.writeText(shareUrl);
       copySuccess = true;
       
@@ -88,8 +98,10 @@
       copyTimeout = setTimeout(() => {
         copySuccess = false;
       }, 1000);
-    } catch (err) {
-      console.error('Failed to copy link:', err);
+
+    } catch (err) { // Catch errors from clipboard API or other unexpected issues
+      console.error('Failed to copy link or unexpected error:', err);
+      alert('Failed to copy link. Please try again.');
     }
   }
 
@@ -103,15 +115,8 @@
     imageOnTop = !imageOnTop;
   }
 
-  // Function to get the correct image extension
-  function getImagePath(imageNum: number): string {
-    if (imageNum === 9 || imageNum === 10) {
-      return `/images/img${imageNum}.png`;
-    }
-    return `/images/img${imageNum}.jpg`;
-  }
-
   onMount(() => {
+    imageStore.loadImages();
     return () => {
       clearTimeout(copyTimeout);
       clearTimeout(colorCloseTimeout);
@@ -131,7 +136,7 @@
       <a href="/edit" class="flex items-center text-[#3D3D3D] hover:text-black">
         <ArrowLeft class="w-6 h-6" />
       </a>
-      <h1 class="text-[40px] sm:text-[56px] font-jomhuria leading-[40px] sm:leading-[56px] text-black whitespace-nowrap">Post</h1>
+      <h1 class="text-[52px] font-jomhuria leading-[52px] text-black whitespace-nowrap">Post</h1>
     </div>
   </header>
 
@@ -148,7 +153,7 @@
         <div class="w-full h-full flex items-center justify-center">
           <div class="w-[406px] h-[509.49px] flex items-center justify-center">
             <img
-              src={getImagePath(selectedImage)}
+              src={currentPostcardImageUrl || '/placeholder.png'}
               alt="Selected postcard"
               class="w-full h-full object-cover"
             />
@@ -236,6 +241,24 @@
           {#if copySuccess}
             <div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap">
               Link copied!
+            </div>
+          {/if}
+        </button>
+
+        <!-- Disabled Email Button with Tooltip -->
+        <button
+          class="h-12 px-6 bg-black text-white rounded-lg flex items-center justify-center gap-2 transition-colors disabled:bg-[#F2F2F7] disabled:text-[#8E8E93] disabled:cursor-not-allowed mt-8 relative"
+          disabled
+          aria-label="Email (coming soon)"
+          tabindex="-1"
+          on:mouseenter={() => showEmailTooltip = true}
+          on:mouseleave={() => showEmailTooltip = false}
+        >
+          <span class="material-symbols-outlined !text-[20px] !font-normal !leading-none flex items-center">mail</span>
+          <span class="text-sm font-medium">Email</span>
+          {#if showEmailTooltip}
+            <div class="absolute -top-[44px] left-1/2 -translate-x-1/2 bg-black text-white text-xs px-3 py-2 rounded whitespace-nowrap z-20 shadow-lg" role="tooltip">
+              For now, you have to copy link and share — Email sending is coming soon!
             </div>
           {/if}
         </button>
