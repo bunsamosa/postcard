@@ -172,8 +172,8 @@
     <div class="flex flex-col items-center justify-center w-full max-w-xl mx-auto px-4 -mt-9">
       <h2 class="font-jomhuria font-normal text-[56px] mb-0 text-center">About</h2>
       <p class="font-caveat text-[26px] text-center text-black max-w-2xl">
-        There was a time when sending a postcard meant slowing down to share a moment, a thought, or a feeling with friends and family far away. I've always loved that. This is my little way of bringing back that magic digitally.<br><br>
-        In a world of instant messages, here's a space for art, memories, and words. Each postcard features artwork I've created over the years, and will keep adding to. Enjoy!
+        There was a time when sending a postcard meant - slowing down to share a moment, a thought, or a feeling with friends and family far away. I've always loved that. This is my little way of bringing back that magic digitally.<br><br>
+        In a world of instant messages, here's a space for art, memories, and words. Each postcard features artwork I've created over the years, and will keep adding to. Enjoy! <br> ~Sukanya
       </p>
     </div>
     <!-- Corner Image -->
