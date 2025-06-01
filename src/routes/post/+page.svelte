@@ -253,7 +253,7 @@
           <span class="text-sm font-medium">Copy link to share</span>
           {#if copySuccess}
             <div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-black text-white text-xs px-2 py-1 rounded whitespace-nowrap">
-              Link copied!
+              Link copied! paste to share
             </div>
           {/if}
         </button>
