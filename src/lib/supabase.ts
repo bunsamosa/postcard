@@ -24,8 +24,10 @@ export const fetchPostcardImages = async (): Promise<PostcardImage[]> => {
   const filenames = [
     'img1.jpg', 'img2.jpg', 'img3.jpg', 'img4.jpg', 'img5.jpg',
     'img6.jpg', 'img7.jpg', 'img8.jpg', 'img9.jpg', 'img10.jpg',
-    'img11.jpg', 'img12.jpg', 'img14.jpg', 'img15.png'
+    'img11.jpg', 'img12.jpg', 'img14.jpg', 'img15.png', 'img16.jpg', 'img17.jpg', 'img18.jpg',
+    'img19.jpg', 'img20.jpg' 
   ];
+
   const urlBase = 'https://djefjmucdhbrngeqovuz.supabase.co/storage/v1/object/public/postcard-images/';
   const images = filenames.map(name => ({
     name,

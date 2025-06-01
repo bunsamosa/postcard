@@ -28,10 +28,10 @@
     stampStore.loadStamps();
     if (!$postcardStore.selectedStamp || $postcardStore.selectedStamp < 1 || $postcardStore.selectedStamp > 14 ) {
         const randomStampIndex = Math.floor(Math.random() * 14) + 1;
-        postcardStore.update(store => ({
-            ...store,
-            selectedStamp: randomStampIndex
-        }));
+  postcardStore.update(store => ({
+    ...store,
+    selectedStamp: randomStampIndex
+  }));
     }
   });
 
