@@ -7,7 +7,7 @@
   import { generateRandomName } from "$lib/utils/random-name";
   import { supabase } from '$lib/supabaseClient';
   import { imageStore } from '$lib/stores/images';
-  import { stamps } from '$lib/data/stamps';
+  import { stampStore } from '$lib/stores/stamps';
   
   let userName = "";
   let colorCloseTimeout: ReturnType<typeof setTimeout>;
@@ -23,9 +23,10 @@
   let shareId = "";
   let showEmailTooltip = false;
   let currentPostcardImageUrl: string | null = null;
-  
+
   // Get stamp from store
-  let selectedStamp = stamps[$postcardStore.selectedStamp - 1];
+  let currentStampPath: string | null = null;
+  let currentStampName = `Stamp ${$postcardStore.selectedStamp}`;
   
   // Subscribe to the store
   postcardStore.subscribe(store => {
@@ -34,7 +35,8 @@
     selectedFont = store.selectedFont;
     selectedColor = store.selectedColor;
     selectedImage = Number(store.selectedImage);
-    selectedStamp = stamps[store.selectedStamp - 1];
+    currentStampPath = stampStore.getStampUrl($postcardStore.selectedStamp);
+    currentStampName = `Stamp ${$postcardStore.selectedStamp}`;
   });
   
   // Subscribe to imageStore for image URL
@@ -51,7 +53,7 @@
   $: if (selectedImage > 0 && imageStore) {
     currentPostcardImageUrl = imageStore.getImageUrl(selectedImage);
   }
-
+  
   function handleEmailIt() {
     // TODO: Implement email functionality
     console.log("Emailing postcard...");
@@ -117,6 +119,7 @@
 
   onMount(() => {
     imageStore.loadImages();
+    stampStore.loadStamps();
     return () => {
       clearTimeout(copyTimeout);
       clearTimeout(colorCloseTimeout);
@@ -170,11 +173,21 @@
         <div class="w-full h-full rounded relative">
           <!-- Stamp -->
           <div class="absolute top-0 right-0">
+            {#if currentStampPath}
             <img 
-              src={selectedStamp.path} 
-              alt={`${selectedStamp.name} postage stamp`} 
+              src={currentStampPath} 
+              alt={`${currentStampName} postage stamp`} 
               class="w-16 h-20 object-contain rounded-sm"
             />
+            {:else if $stampStore.isLoading}
+            <div class="w-16 h-20 flex items-center justify-center bg-gray-200 rounded-sm">
+              <span class="text-xs text-gray-500">...</span>
+            </div>
+            {:else}
+            <div class="w-16 h-20 flex items-center justify-center bg-gray-100 rounded-sm">
+               <span class="text-xs text-red-500">!</span>
+            </div>
+            {/if}
           </div>
 
           <!-- Main Content Area -->
