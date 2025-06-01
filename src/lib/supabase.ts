@@ -33,4 +33,39 @@ export const fetchPostcardImages = async (): Promise<PostcardImage[]> => {
   }));
   console.log('Hardcoded images:', images);
   return images;
+};
+
+// Type for the stamp images
+export interface StampImage {
+  name: string;
+  url: string;
+}
+
+// Function to fetch stamp images from the stamp-images storage bucket
+export const fetchStampImages = async (): Promise<StampImage[]> => {
+  // Assuming 14 stamps based on existing data
+  const filenames = Array.from({ length: 14 }, (_, i) => `stamp${i + 1}.jpg`);
+  const urlBase = `${supabaseUrl}/storage/v1/object/public/stamp-images/`;
+
+  if (!supabaseUrl) {
+    console.error("Supabase URL is not configured. Cannot fetch stamp images.");
+    return [];
+  }
+
+  const images = filenames.map(name => ({
+    name,
+    url: urlBase + name
+  }));
+  console.log('Fetched stamp images:', images);
+  return images;
+};
+
+// Function to get a public URL for a specific stamp by filename
+export const getStampUrlByName = (filename: string): string | null => {
+  if (!supabaseUrl) {
+    console.error("Supabase URL is not configured. Cannot get stamp URL.");
+    return null;
+  }
+  const urlBase = `${supabaseUrl}/storage/v1/object/public/stamp-images/`;
+  return urlBase + filename;
 }; 
