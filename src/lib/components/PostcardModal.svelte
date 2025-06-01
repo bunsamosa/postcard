@@ -94,14 +94,14 @@
           {:else if error}
             <div class="text-red-500">{error}</div>
           {:else if currentImageUrl}
-            <img
+          <img
               src={currentImageUrl}
-              alt="Selected postcard"
-              class="w-[409.248px] h-full object-cover"
+            alt="Selected postcard"
+            class="w-[409.248px] h-full object-cover"
               on:error={() => {
                 error = 'Failed to load image';
               }}
-            />
+          />
           {:else}
             <div class="text-gray-500">No image available</div>
           {/if}

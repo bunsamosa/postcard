@@ -2,6 +2,7 @@
   import { page } from "$app/stores";
   import { onMount } from "svelte";
   import { Loader2, RotateCw } from "lucide-svelte";
+  import { stampStore } from "$lib/stores/stamps";
 
   let isLoading = true;
   let isFlipped = false;
@@ -12,8 +13,12 @@
   let selectedColor = "#FFFFFF";
   let selectedImage = 1;
   let imageOnTop = false;
+  let indiaStampUrl: string | null = null;
 
   onMount(() => {
+    stampStore.loadStamps();
+    indiaStampUrl = stampStore.getStampUrlByName('india-stamp.png');
+
     // Decode the base64 URL parameter to get the postcard data
     try {
       const encodedData = $page.params.id;
@@ -108,7 +113,12 @@
 
               <!-- Stamp -->
               <div class="absolute top-4 right-4">
-                <img src="/images/india-stamp.png" alt="India postage stamp" class="w-16 h-20 object-contain" />
+                {#if indiaStampUrl}
+                <img src={indiaStampUrl} alt="India postage stamp" class="w-16 h-20 object-contain" />
+                {:else}
+                <!-- Placeholder for stamp if URL is not yet available -->
+                <div class="w-16 h-20 bg-gray-200 rounded-sm"></div>
+                {/if}
               </div>
 
               <!-- Copyright Text -->

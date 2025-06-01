@@ -5,6 +5,7 @@
   import { scale } from "svelte/transition";
   import { goto } from "$app/navigation";
   import { postcardStore } from "$lib/stores/postcard";
+  import { stampStore } from "$lib/stores/stamps";
   import { onMount } from "svelte";
   
   let isFlipped = false;
@@ -20,33 +21,29 @@
   let selectedFont = $postcardStore.selectedFont;
   let selectedColor = $postcardStore.selectedColor;
 
-  // Stamps data
-  const stamps = [
-    { name: "Stamp 1", path: "/images/stamps/stamp1.jpg" },
-    { name: "Stamp 2", path: "/images/stamps/stamp2.jpg" },
-    { name: "Stamp 3", path: "/images/stamps/stamp3.jpg" },
-    { name: "Stamp 4", path: "/images/stamps/stamp4.jpg" },
-    { name: "Stamp 5", path: "/images/stamps/stamp5.jpg" },
-    { name: "Stamp 6", path: "/images/stamps/stamp6.jpg" },
-    { name: "Stamp 7", path: "/images/stamps/stamp7.jpg" },
-    { name: "Stamp 8", path: "/images/stamps/stamp8.jpg" },
-    { name: "Stamp 9", path: "/images/stamps/stamp9.jpg" },
-    { name: "Stamp 10", path: "/images/stamps/stamp10.jpg" },
-    { name: "Stamp 11", path: "/images/stamps/stamp11.jpg" },
-    { name: "Stamp 12", path: "/images/stamps/stamp12.jpg" },
-    { name: "Stamp 13", path: "/images/stamps/stamp13.jpg" },
-    { name: "Stamp 14", path: "/images/stamps/stamp14.jpg" }
-  ];
+  let currentStampName = `Stamp ${$postcardStore.selectedStamp}`;
+  let currentStampPath: string | null = null;
 
-  // Get random stamp on page load
-  const randomStampIndex = Math.floor(Math.random() * stamps.length) + 1;
-  postcardStore.update(store => ({
-    ...store,
-    selectedStamp: randomStampIndex
-  }));
+  onMount(() => {
+    stampStore.loadStamps();
+    if (!$postcardStore.selectedStamp || $postcardStore.selectedStamp < 1 || $postcardStore.selectedStamp > 14 ) {
+        const randomStampIndex = Math.floor(Math.random() * 14) + 1;
+        postcardStore.update(store => ({
+            ...store,
+            selectedStamp: randomStampIndex
+        }));
+    }
+  });
 
-  // Get stamp from store
-  let selectedStamp = stamps[$postcardStore.selectedStamp - 1];
+  $: {
+    if ($stampStore.images.length > 0 && $postcardStore.selectedStamp > 0) {
+      currentStampPath = stampStore.getStampUrl($postcardStore.selectedStamp);
+      currentStampName = `Stamp ${$postcardStore.selectedStamp}`;
+    } else if ($postcardStore.selectedStamp > 0) {
+      currentStampPath = stampStore.getStampUrl($postcardStore.selectedStamp);
+      currentStampName = `Stamp ${$postcardStore.selectedStamp}`;
+    }
+  }
 
   // Update store when values change
   $: {
@@ -112,11 +109,11 @@
   function handleChangeStamp() {
     const currentIndex = $postcardStore.selectedStamp;
     let newIndex;
+    const maxStamps = $stampStore.images.length > 0 ? $stampStore.images.length : 14;
     do {
-      newIndex = Math.floor(Math.random() * stamps.length) + 1;
+      newIndex = Math.floor(Math.random() * maxStamps) + 1;
     } while (newIndex === currentIndex);
     
-    selectedStamp = stamps[newIndex - 1];
     postcardStore.update(store => ({
       ...store,
       selectedStamp: newIndex
@@ -163,21 +160,31 @@
             <!-- Stamp -->
             <button 
               type="button"
-              class="absolute top-4 right-4 cursor-pointer focus:outline-none"
+              class="absolute top-4 right-4 cursor-pointer focus:outline-none w-16 h-20"
               on:mouseenter={() => isStampHovered = true}
               on:mouseleave={() => isStampHovered = false}
               on:click={handleChangeStamp}
             >
-              <div class="relative">
+              <div class="relative w-full h-full">
+                {#if currentStampPath}
                 <img 
-                  src={selectedStamp.path} 
-                  alt={`${selectedStamp.name} postage stamp`} 
-                  class="w-16 h-20 object-contain rounded-sm transition-opacity duration-200"
+                  src={currentStampPath} 
+                  alt={`${currentStampName} postage stamp`} 
+                  class="w-16 h-20 object-contain rounded-sm transition-opacity duration-200 pointer-events-none"
                   style="opacity: {isStampHovered ? '0.5' : '1'}"
                 />
-                {#if isStampHovered}
+                {:else if $stampStore.isLoading}
+                <div class="w-16 h-20 flex items-center justify-center bg-gray-200 rounded-sm">
+                  <span class="text-xs text-gray-500">...</span>
+                </div>
+                {:else}
+                <div class="w-16 h-20 flex items-center justify-center bg-gray-100 rounded-sm">
+                  <span class="text-xs text-red-500">!</span>
+                </div>
+                {/if}
+                {#if isStampHovered && currentStampPath}
                   <div 
-                    class="absolute inset-0 flex items-center justify-center"
+                    class="absolute inset-0 flex items-center justify-center pointer-events-none"
                     transition:scale={{ duration: 200, start: 0.95 }}
                   >
                     <span class="material-symbols-outlined text-white text-[24px]">wand_stars</span>
