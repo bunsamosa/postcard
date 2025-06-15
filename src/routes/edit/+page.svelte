@@ -329,8 +329,8 @@
           on:click={handleSend}
           disabled={!message.trim()}
         >
-          <Send class="w-4 h-4" />
           <span class="text-sm font-medium">Post</span>
+          <Send class="w-4 h-4" />
         </button>
       </div>
     </div>
