@@ -41,8 +41,24 @@
 </script>
 
 <svelte:head>
+
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="Postcards by Suku" />
+  <meta property="og:description" content="Send hand-drawn digital postcards with artwork by Sukanya" />
+  <meta property="og:image" content="https://postcards-weld.vercel.app/og-preview.jpg" />
+  <meta property="og:url" content="https://postcards-weld.vercel.app/" />
+  <meta property="og:type" content="website" />
+
+  <!-- Twitter Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Postcards by Suku" />
+  <meta name="twitter:description" content="Send hand-designed digital postcards with love." />
+  <meta name="twitter:image" content="https://postcards-weld.vercel.app/og-preview.jpg" />
+
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Jomhuria&family=Inter:wght@400;500&family=Caveat:wght@400;500&display=swap" rel="stylesheet">
 </svelte:head>
+
 
 <div class="w-screen h-screen relative bg-white overflow-hidden font-inter">
   <div class="w-full h-full relative">
