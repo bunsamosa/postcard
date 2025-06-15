@@ -67,8 +67,9 @@
     <!-- Header -->
     <h1 class="text-[40px] font-jomhuria leading-[40px] text-black mb-16">{senderName} sent you a postcard!</h1>
 
+    <div class="postcard-wrapper w-full">
     <!-- Postcard Container -->
-    <div class="relative" style="width: 600px; height: 600px;">
+      <div class="relative postcard" style="width: 600px; height: 600px;">
       <!-- Image Side (Bottom Layer) -->
       <div 
         class="absolute -top-6 left-[72px] w-[450px] h-[600px] shadow-[0px_30.29px_83.51px_rgba(12,12,13,0.10)] rounded-lg overflow-hidden cursor-pointer transition-all duration-300" 
@@ -113,12 +114,12 @@
 
               <!-- Stamp -->
               <div class="absolute top-4 right-4">
-                {#if indiaStampUrl}
-                <img src={indiaStampUrl} alt="India postage stamp" class="w-16 h-20 object-contain" />
-                {:else}
-                <!-- Placeholder for stamp if URL is not yet available -->
-                <div class="w-16 h-20 bg-gray-200 rounded-sm"></div>
-                {/if}
+                  {#if indiaStampUrl}
+                  <img src={indiaStampUrl} alt="India postage stamp" class="w-16 h-20 object-contain" />
+                  {:else}
+                  <!-- Placeholder for stamp if URL is not yet available -->
+                  <div class="w-16 h-20 bg-gray-200 rounded-sm"></div>
+                  {/if}
               </div>
 
               <!-- Copyright Text -->
@@ -133,6 +134,7 @@
                   style="font-size: {selectedFont === 'Caveat' ? '26px' : '20px'}; --line-color: {selectedColor === '#FFFFFF' ? '#E9E9E9' : '#E4CE9E'};"
                 >
                   {recipientInfo}
+                  </div>
                 </div>
               </div>
             </div>
@@ -152,7 +154,7 @@
     </div>
 
     <!-- Footer -->
-    <div class="mt-auto pt-8 text-center">
+    <div class="mt-auto pt-8 text-center px-4">
       <p class="text-sm text-[#8E8E93]">© 2025 Postcardit.com</p>
     </div>
   {/if}
@@ -198,5 +200,21 @@
     background-image: repeating-linear-gradient(transparent, transparent 41px, var(--line-color, #E9E9E9) 41px, var(--line-color, #E9E9E9) 42px);
     line-height: 42px;
     padding: 0;
+  }
+
+  .postcard-wrapper {
+    overflow-x: auto;
+  }
+  .postcard {
+    margin: 0;
+  }
+
+  @media (min-width: 640px) {
+    .postcard-wrapper {
+        overflow: visible;
+    }
+    .postcard {
+        margin: 0 auto;
+    }
   }
 </style> 

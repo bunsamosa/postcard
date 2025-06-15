@@ -114,8 +114,11 @@
           on:click={onEdit}
           class="bg-black text-white p-4 rounded-[12px] text-base font-inter font-medium hover:bg-black/90 transition-colors inline-flex items-center gap-2"
         >
-          I like this <span class="text-lg">→</span>
-        </button>
+          Post <span class="text-sm">→</span>
+        </button> 
+      
+
+
       </div>
     </div>
   </div>
