@@ -159,7 +159,7 @@
       <div 
         class="absolute -top-6 left-[72px] w-[450px] h-[600px] shadow-[0px_30.29px_83.51px_rgba(12,12,13,0.10)] rounded-lg overflow-hidden cursor-pointer transition-all duration-300" 
         style="transform: rotate({imageOnTop ? '0deg' : '12deg'}); background-color: {selectedColor === '#FFEDB5' ? '#FFFCF2' : '#FFFFFF'}; z-index: {imageOnTop ? 20 : 10};"
-        on:click={() => toggleCardOrder()}
+        onclick={() => toggleCardOrder()}
       >
         <div class="w-full h-full flex items-center justify-center">
           <div class="w-[406px] h-[509.49px] flex items-center justify-center">
@@ -176,7 +176,7 @@
       <div 
         class="absolute top-0 left-0 w-[600px] h-[450px] shadow-[0px_30.29px_83.51px_rgba(12,12,13,0.10)] rounded-lg p-6 bg-white cursor-pointer transition-all duration-300" 
         style="background-color: {selectedColor}; z-index: {imageOnTop ? 10 : 20};"
-        on:click={() => toggleCardOrder()}
+        onclick={() => toggleCardOrder()}
       >
         <div class="w-full h-full rounded relative">
           <!-- Stamp -->
@@ -255,7 +255,7 @@
         <button 
           class="h-12 px-6 bg-black text-white rounded-lg flex items-center justify-center gap-2 hover:bg-[#1A1A1A] transition-colors disabled:bg-[#F2F2F7] disabled:text-[#8E8E93] disabled:cursor-not-allowed mt-8 relative"
           disabled={!userName.trim()}
-          on:click={handleCopyLink}
+          onclick={handleCopyLink}
         >
           <span class="material-symbols-outlined !text-[20px] !font-normal !leading-none flex items-center">link</span>
           <span class="text-sm font-medium">Copy link to share</span>
@@ -272,8 +272,8 @@
           disabled
           aria-label="Email (coming soon)"
           tabindex="-1"
-          on:mouseenter={() => showEmailTooltip = true}
-          on:mouseleave={() => showEmailTooltip = false}
+          onmouseenter={() => showEmailTooltip = true}
+          onmouseleave={() => showEmailTooltip = false}
         >
           <span class="material-symbols-outlined !text-[20px] !font-normal !leading-none flex items-center">mail</span>
           <span class="text-sm font-medium">Email</span>

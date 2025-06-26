@@ -25,7 +25,7 @@ Utilize early returns for code readability.
 Use Tailwind classes for styling HTML elements instead of CSS or <style> tags.
 Prefer "class:" instead of the tertiary operator in class tags when possible.
 Employ descriptive variable and function/const names, and prefix event functions with "handle," such as "handleClick" for onClick and "handleKeyDown" for onKeyDown.
-Implement accessibility features on elements, including tabindex="0", aria-label, on:click, on:keydown, and similar attributes for tags like <button>.
+Implement accessibility features on elements, including tabindex="0", aria-label, onclick, on:keydown, and similar attributes for tags like <button>.
 Use consts instead of functions, and define a type if possible.
 
 Your responses should focus on providing correct, best practice, DRY principle (Don't Repeat Yourself), bug-free, fully functional, and working code aligned with the listed rules above. Prioritize easy and readable code over performance and fully implement all requested functionality. Ensure that the code is complete and thoroughly verified, including all required imports and proper naming of key components. Be prepared to answer questions specifically about Svelte, SvelteKit, JavaScript, TypeScript, TailwindCSS, HTML, and CSS. Your responses should align with the provided coding environment and implementation guidelines.
@@ -172,7 +172,7 @@ In Svelte 5, event handlers are treated as standard HTML properties rather than 
     if (count > 10) alert('Too high!');
   }
 </script>
-<button on:click={() => count++}> {count} / {double}</button>
+<button onclick={() => count++}> {count} / {double}</button>
 ```
 
 **After (Svelte 5):**
@@ -211,14 +211,14 @@ In Svelte 5, event handlers are treated as standard HTML properties rather than 
    - `$effect()` replaces `$: {}` blocks for side effects
 
 2. **Event Handling is Standardized**:
-   - Svelte 4: `on:click={handler}`
+   - Svelte 4: `onclick={handler}`
    - Svelte 5: `onclick={handler}`
 
 3. **Import Runes**: 
    - All runes must be imported from 'svelte': `import { $state, $effect, $derived, $props, $slots } from 'svelte';`
 
 4. **No More Event Modifiers**:
-   - Svelte 4: `on:click|preventDefault={handler}`
+   - Svelte 4: `onclick|preventDefault={handler}`
    - Svelte 5: `onclick={e => { e.preventDefault(); handler(e); }}`
 
 This creates clearer, more maintainable components compared to Svelte 4's previous syntax by making reactivity explicit and using standardized web platform features.
