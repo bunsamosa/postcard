@@ -15,6 +15,14 @@
   let imageOnTop = false;
   let indiaStampUrl: string | null = null;
 
+  const supabaseUrlBase = 'https://djefjmucdhbrngeqovuz.supabase.co/storage/v1/object/public/postcard-images/';
+  const supabaseFilenames = [
+    'img1.jpg', 'img2.jpg', 'img3.jpg', 'img4.jpg', 'img5.jpg',
+    'img6.jpg', 'img7.jpg', 'img8.jpg', 'img10.jpg', 'img11.jpg',
+    'img12.jpg', 'img13.jpg', 'img14.jpg', 'img15.jpg', 'img16.jpg',
+    'img17.jpg', 'img18.jpg', 'img19.jpg', 'img20.jpg'
+  ];
+
   onMount(() => {
     stampStore.loadStamps();
     indiaStampUrl = stampStore.getStampUrlByName('india-stamp.png');
@@ -46,11 +54,8 @@
   }
 
   // Function to get the correct image extension
-  function getImagePath(imageNum: number): string {
-    if (imageNum === 9 || imageNum === 10) {
-      return `/images/img${imageNum}.png`;
-    }
-    return `/images/img${imageNum}.jpg`;
+  function getSupabaseImageUrl(imageNum: number): string {
+    return `${supabaseUrlBase}${supabaseFilenames[imageNum - 1]}`;
   }
 </script>
 
@@ -79,7 +84,7 @@
         <div class="w-full h-full flex items-center justify-center">
           <div class="w-[406px] h-[509.49px] flex items-center justify-center">
             <img
-              src={getImagePath(selectedImage)}
+              src={getSupabaseImageUrl(selectedImage)}
               alt="Selected postcard"
               class="w-full h-full object-cover"
             />

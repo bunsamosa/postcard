@@ -20,12 +20,12 @@ export interface PostcardImage {
 
 // Function to fetch images from the postcard-images storage bucket
 export const fetchPostcardImages = async (): Promise<PostcardImage[]> => {
-  // Hardcoded filenames from your Supabase bucket
+  // Filenames exactly as in Supabase, in order
   const filenames = [
     'img1.jpg', 'img2.jpg', 'img3.jpg', 'img4.jpg', 'img5.jpg',
-    'img6.jpg', 'img7.jpg', 'img8.jpg', 'img9.jpg', 'img10.jpg',
-    'img11.jpg', 'img12.jpg', 'img14.jpg', 'img15.png', 'img16.jpg', 'img17.jpg', 'img18.jpg',
-    'img19.jpg', 'img20.jpg', 'img21.jpg'
+    'img6.jpg', 'img7.jpg', 'img8.jpg', 'img10.jpg', 'img11.jpg',
+    'img12.jpg', 'img13.jpg', 'img14.jpg', 'img15.jpg', 'img16.jpg',
+    'img17.jpg', 'img18.jpg', 'img19.jpg', 'img20.jpg'
   ];
 
   const urlBase = 'https://djefjmucdhbrngeqovuz.supabase.co/storage/v1/object/public/postcard-images/';
@@ -33,7 +33,6 @@ export const fetchPostcardImages = async (): Promise<PostcardImage[]> => {
     name,
     url: urlBase + name
   }));
-  console.log('Hardcoded images:', images);
   return images;
 };
 

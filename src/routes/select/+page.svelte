@@ -7,6 +7,7 @@
   import { spring } from 'svelte/motion';
   import { fade, fly } from 'svelte/transition';
   import { imageStore } from '$lib/stores/images';
+  import { page } from '$app/stores';
 
   let currentIndex = 0;
   let isStackView = true;
@@ -29,6 +30,8 @@
     if (typeof window !== 'undefined') {
       document.body.style.overflow = isStackView ? 'hidden' : '';
     }
+    if ($page.url.searchParams.get('view') === 'grid') isStackView = false;
+    if ($page.url.searchParams.get('view') === 'stack') isStackView = true;
   }
 
   onMount(() => {
@@ -147,6 +150,11 @@
     const subject = encodeURIComponent('Print Order Request');
     const body = encodeURIComponent('Hi Sukanya, \nI want to request a print order for your postcards!');
     window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=${email}&su=${subject}&body=${body}`, '_blank');
+  }
+
+  function gotoPostPage(imageNum: number) {
+    const viewParam = isStackView ? 'stack' : 'grid';
+    goto(`/post?view=${viewParam}&image=${imageNum}`);
   }
 </script>
 
