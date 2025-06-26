@@ -20,6 +20,14 @@
 
   const randomImages = getRandomImageNumbers(4);
 
+  const supabaseUrlBase = 'https://djefjmucdhbrngeqovuz.supabase.co/storage/v1/object/public/postcard-images/';
+  const supabaseFilenames = [
+    'img1.jpg', 'img2.jpg', 'img3.jpg', 'img4.jpg', 'img5.jpg',
+    'img6.jpg', 'img7.jpg', 'img8.jpg', 'img10.jpg', 'img11.jpg',
+    'img12.jpg', 'img13.jpg', 'img14.jpg', 'img15.jpg', 'img16.jpg',
+    'img17.jpg', 'img18.jpg', 'img19.jpg', 'img20.jpg'
+  ];
+
   function navigateToSelect() {
     goto('/select');
   }
@@ -89,28 +97,28 @@
       <!-- Bottom left postcard -->
       <div class="absolute w-[276.77px] h-[369.02px] left-[5%] bottom-[15%] [transform:rotate(3.81deg)] origin-top-left">
         <div class="w-full h-full bg-white shadow-[0px_4px_4px_-4px_rgba(12,12,13,0.05)] p-[13.67px]">
-          <img src="/images/img{randomImages[0]}.jpg" class="w-full h-full object-cover" alt="Decorative postcard" />
+          <img src={`${supabaseUrlBase}${supabaseFilenames[randomImages[0] - 1]}`} class="w-full h-full object-cover" alt="Decorative postcard" />
         </div>
       </div>
 
       <!-- Top left postcard -->
       <div class="absolute w-[264px] h-[352px] left-[2%] top-[20%] [transform:rotate(-6deg)] origin-top-left">
         <div class="w-full h-full bg-white shadow-[0px_4px_4px_-4px_rgba(12,12,13,0.05)] p-[13.04px]">
-          <img src="/images/img{randomImages[1]}.jpg" class="w-full h-full object-cover" alt="Decorative postcard" />
+          <img src={`${supabaseUrlBase}${supabaseFilenames[randomImages[1] - 1]}`} class="w-full h-full object-cover" alt="Decorative postcard" />
         </div>
       </div>
 
       <!-- Top right postcard -->
       <div class="absolute w-[264px] h-[352px] right-[5%] top-[20%] [transform:rotate(6.61deg)] origin-top-right">
         <div class="w-full h-full bg-white shadow-[0px_4px_4px_-4px_rgba(12,12,13,0.05)] p-[13.04px]">
-          <img src="/images/img{randomImages[2]}.jpg" class="w-full h-full object-cover" alt="Decorative postcard" />
+          <img src={`${supabaseUrlBase}${supabaseFilenames[randomImages[2] - 1]}`} class="w-full h-full object-cover" alt="Decorative postcard" />
         </div>
       </div>
 
       <!-- Bottom right postcard -->
       <div class="absolute w-[260px] h-[346.67px] right-[8%] bottom-[12%] [transform:rotate(-5.03deg)] origin-bottom-right">
         <div class="w-full h-full bg-white shadow-[0px_4px_4px_-4px_rgba(12,12,13,0.05)] p-[12.04px]">
-          <img src="/images/img{randomImages[3]}.jpg" class="w-full h-full object-cover" alt="Decorative postcard" />
+          <img src={`${supabaseUrlBase}${supabaseFilenames[randomImages[3] - 1]}`} class="w-full h-full object-cover" alt="Decorative postcard" />
         </div>
       </div>
     </div>
