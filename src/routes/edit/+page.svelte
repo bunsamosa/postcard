@@ -169,9 +169,9 @@
             <button 
               type="button"
               class="absolute top-4 right-4 cursor-pointer focus:outline-none w-16 h-20"
-              on:mouseenter={() => isStampHovered = true}
-              on:mouseleave={() => isStampHovered = false}
-              on:click={handleChangeStamp}
+              onmouseenter={() => isStampHovered = true}
+              onmouseleave={() => isStampHovered = false}
+              onclick={handleChangeStamp}
             >
               <div class="relative w-full h-full">
                 {#if currentStampPath}
@@ -264,8 +264,8 @@
         <div class="relative">
           <button 
             class="w-11 h-11 flex items-center justify-center rounded-[12px] hover:bg-[#F2F2F7] text-[#3D3D3D] transition-colors"
-            on:mouseenter={handleFontMenuEnter}
-            on:mouseleave={handleFontMenuLeave}
+            onmouseenter={handleFontMenuEnter}
+            onmouseleave={handleFontMenuLeave}
           >
             <span class="{selectedFont === 'Caveat' ? 'font-caveat' : selectedFont === 'Courier Prime' ? 'font-courier-prime' : 'font-eb-garamond'} {selectedFont === 'Caveat' ? 'text-[24px]' : 'text-[20px]'}">Aa</span>
           </button>
@@ -275,13 +275,13 @@
               class="font-selector-menu absolute top-0 left-0 -translate-y-full bg-white rounded-[12px] shadow-[0px_2px_20px_rgba(0,0,0,0.1)] overflow-hidden min-w-[120px] transition-all duration-200 ease-out origin-bottom-left mt-[-8px]"
               in:scale={{ duration: 200, start: 0.95, opacity: 0 }}
               out:scale={{ duration: 150, start: 0.95, opacity: 0 }}
-              on:mouseenter={handleFontMenuEnter}
-              on:mouseleave={handleFontMenuLeave}
+              onmouseenter={handleFontMenuEnter}
+              onmouseleave={handleFontMenuLeave}
             >
               {#each fonts as font}
                 <button
                   class="w-full h-11 px-4 flex items-center justify-between hover:bg-[#F2F2F7] transition-colors {selectedFont === font.name ? 'bg-black text-white hover:bg-black' : ''}"
-                  on:click={() => handleFontSelect(font.name)}
+                  onclick={() => handleFontSelect(font.name)}
                 >
                   <span class="{font.class} {font.name === 'Caveat' ? 'text-[24px]' : 'text-[20px]'}">{font.preview}</span>
                 </button>
@@ -294,8 +294,8 @@
         <div class="relative">
           <button 
             class="w-11 h-11 flex items-center justify-center rounded-[12px] hover:bg-[#F2F2F7] transition-colors"
-            on:mouseenter={handleColorMenuEnter}
-            on:mouseleave={handleColorMenuLeave}
+            onmouseenter={handleColorMenuEnter}
+            onmouseleave={handleColorMenuLeave}
           >
             <div class="w-5 h-5 rounded-full border border-[#E5E5EA]" style="background-color: {selectedColor};"></div>
           </button>
@@ -305,13 +305,13 @@
               class="color-selector-menu absolute top-0 left-0 -translate-y-full bg-white rounded-[12px] shadow-[0px_2px_20px_rgba(0,0,0,0.1)] overflow-hidden min-w-[120px] transition-all duration-200 ease-out origin-bottom-left mt-[-8px]"
               in:scale={{ duration: 200, start: 0.95, opacity: 0 }}
               out:scale={{ duration: 150, start: 0.95, opacity: 0 }}
-              on:mouseenter={handleColorMenuEnter}
-              on:mouseleave={handleColorMenuLeave}
+              onmouseenter={handleColorMenuEnter}
+              onmouseleave={handleColorMenuLeave}
             >
               {#each colors as color}
                 <button
                   class="w-full h-11 px-4 flex items-center justify-between hover:bg-[#F2F2F7] transition-colors {selectedColor === color.value ? 'bg-black hover:bg-black' : ''}"
-                  on:click={() => handleColorSelect(color.value)}
+                  onclick={() => handleColorSelect(color.value)}
                 >
                   <div class="flex items-center gap-3">
                     <div class="w-5 h-5 rounded-full border border-[#E5E5EA] flex-shrink-0" style="background-color: {color.value};"></div>
@@ -324,7 +324,7 @@
         </div>
 
         <!-- Flip Button -->
-        <button class="w-11 h-11 flex items-center justify-center rounded-[12px] hover:bg-[#F2F2F7] text-[#3D3D3D] transition-colors" on:click={handleFlip}>
+        <button class="w-11 h-11 flex items-center justify-center rounded-[12px] hover:bg-[#F2F2F7] text-[#3D3D3D] transition-colors" onclick={handleFlip}>
           <RotateCw class="w-5 h-5" />
         </button>
 
@@ -334,7 +334,7 @@
         <!-- Send Button -->
         <button 
           class="h-11 px-3 rounded-[12px] flex items-center gap-2 transition-colors {message.trim() ? 'bg-black text-white hover:bg-[#1A1A1A]' : 'bg-[#F2F2F7] text-[#8E8E93] cursor-not-allowed'}"
-          on:click={handleSend}
+          onclick={handleSend}
           disabled={!message.trim()}
         >
           <span class="text-sm font-medium">Post</span>

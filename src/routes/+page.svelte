@@ -63,7 +63,7 @@
     <!-- Close button -->
     <button
       class="w-[36px] h-[36px] absolute right-4 sm:right-6 top-4 sm:top-6 flex items-center justify-center hover:opacity-80"
-      on:click={navigateToSelect}
+      onclick={navigateToSelect}
     >
       <X class="w-[18px] h-[18px] text-[#AEAEB2]" strokeWidth={2} />
     </button>
@@ -83,7 +83,7 @@
       <div class="w-fit h-[48px] sm:h-[52px] flex flex-col items-center gap-[6px]">
         <button
           type="button"
-          on:click={navigateToSelect}
+          onclick={navigateToSelect}
           class="px-[16px] sm:px-[20px] py-[12px] sm:py-[14px] bg-black hover:bg-black/90 rounded-xl flex justify-center items-center gap-2"
         >
           <span class="text-white text-[16px] sm:text-[17px] leading-[20px] sm:leading-[22px]">Enter</span>

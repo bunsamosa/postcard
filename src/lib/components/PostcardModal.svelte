@@ -73,12 +73,12 @@
     <!-- Backdrop -->
     <div 
       class="absolute inset-0 bg-white/80 backdrop-blur-sm"
-      on:click={onClose}
+      onclick={onClose}
     >
       <!-- Close button -->
       <button
         class="absolute right-6 top-6 p-2 hover:bg-black/5 rounded-full"
-        on:click={onClose}
+        onclick={onClose}
       >
         <X class="w-6 h-6 text-[#3D3D3D]" />
       </button>
@@ -111,7 +111,7 @@
       <!-- Like button -->
       <div class="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[calc(100%+24px)]">
         <button
-          on:click={onEdit}
+          onclick={onEdit}
           class="bg-black text-white p-4 rounded-[12px] text-base font-inter font-medium hover:bg-black/90 transition-colors inline-flex items-center gap-2"
         >
           Post <span class="text-sm">→</span>
