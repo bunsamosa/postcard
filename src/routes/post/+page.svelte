@@ -23,6 +23,7 @@
   let shareId = "";
   let showEmailTooltip = false;
   let currentPostcardImageUrl: string | null = null;
+  let viewParam = '';
 
   // Get stamp from store
   let currentStampPath: string | null = null;
@@ -41,18 +42,20 @@
   
   // Subscribe to imageStore for image URL
   imageStore.subscribe(storeState => {
-    if (storeState.images && selectedImage > 0) {
+    if (storeState.images && selectedImage > 0 && selectedImage <= storeState.images.length) {
       currentPostcardImageUrl = storeState.images[selectedImage - 1]?.url || null;
-    } else if (selectedImage > 0) {
-      // If images are not loaded yet, try to get it directly (might be already in cache from select page)
-      currentPostcardImageUrl = imageStore.getImageUrl(selectedImage);
+    } else {
+      currentPostcardImageUrl = null;
     }
   });
   
   // Update image URL when selectedImage changes
   $: if (selectedImage > 0 && imageStore) {
-    currentPostcardImageUrl = imageStore.getImageUrl(selectedImage);
+    const url = imageStore.getImageUrl(selectedImage);
+    currentPostcardImageUrl = url && url.length > 0 ? url : null;
   }
+  
+  $: viewParam = $page.url.searchParams.get('view') || '';
   
   function handleEmailIt() {
     // TODO: Implement email functionality
@@ -117,6 +120,11 @@
     imageOnTop = !imageOnTop;
   }
 
+  function handleBack(event: Event) {
+    event.preventDefault();
+    goto(`/select${viewParam === 'grid' ? '?view=grid' : ''}`);
+  }
+
   onMount(() => {
     imageStore.loadImages();
     stampStore.loadStamps();
@@ -136,7 +144,7 @@
   <!-- Header -->
   <header class="max-w-[1201px] mx-auto h-[104px] sm:h-[104px] px-4 relative">
     <div class="absolute left-1/2 -translate-x-1/2 top-[30px] flex items-center gap-4">
-      <a href="/edit" class="flex items-center text-[#3D3D3D] hover:text-black">
+      <a href={`/select${viewParam === 'grid' ? '?view=grid' : ''}`} class="flex items-center text-[#3D3D3D] hover:text-black" onclick={handleBack} aria-label="Back to select">
         <ArrowLeft class="w-6 h-6" />
       </a>
       <h1 class="text-[52px] font-jomhuria leading-[52px] text-black whitespace-nowrap">Post</h1>
