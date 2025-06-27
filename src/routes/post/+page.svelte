@@ -272,8 +272,10 @@
           disabled
           aria-label="Email (coming soon)"
           tabindex="-1"
+
           onMouseEnter={() => showEmailTooltip = true}
           onMouseLeave={() => showEmailTooltip = false}
+
         >
           <span class="material-symbols-outlined !text-[20px] !font-normal !leading-none flex items-center">mail</span>
           <span class="text-sm font-medium">Email</span>
